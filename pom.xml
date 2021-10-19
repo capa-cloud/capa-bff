@@ -32,6 +32,13 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
+        <!-- Capa's core SDK with all features. -->
+        <dependency>
+            <groupId>group.rxcloud</groupId>
+            <artifactId>capa-sdk</artifactId>
+            <version>1.0.3.RELEASE</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
         <dependency>
             <groupId>com.google.protobuf</groupId>
