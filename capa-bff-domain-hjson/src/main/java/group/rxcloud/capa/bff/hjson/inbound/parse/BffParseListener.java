@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.util.*;
 
-public class MyListener extends CustomerJsonBaseListener{
+public class BffParseListener extends CustomerJsonBaseListener{
 
     public Map<String, HJsonInvocationRequest> requestMap = new HashMap<>();
 
@@ -44,7 +44,7 @@ public class MyListener extends CustomerJsonBaseListener{
             String requestFieldData = AntlrUtils.parseRowString(ctx.getText());
             if (requestFieldData.contains("${")) {
                 HJsonInvocationRequest request = requestMap.get(requestKey);
-                request.getRequiredParams().put(requestFieldData, null);
+                request.getRequiredParams().put(requestFieldData.substring(2, requestFieldData.length()-1), null);
             }
         }
         super.enterSingleRequestFieldValue(ctx);

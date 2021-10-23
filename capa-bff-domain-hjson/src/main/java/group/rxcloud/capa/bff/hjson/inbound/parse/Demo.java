@@ -14,7 +14,7 @@ public class Demo {
         CustomerJsonParser.CustomerJsonContext ast = parser.customerJson();
 
         ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
-        MyListener importListener = new MyListener();
+        BffParseListener importListener = new BffParseListener();
         parseTreeWalker.walk(importListener, ast);
         System.out.println("importListener.requestMap = " + importListener.requestMap);
 

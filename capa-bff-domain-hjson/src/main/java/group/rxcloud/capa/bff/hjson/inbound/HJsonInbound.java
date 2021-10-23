@@ -4,7 +4,7 @@ import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.inbound.parse.CustomerJsonLexer;
 import group.rxcloud.capa.bff.hjson.inbound.parse.CustomerJsonParser;
-import group.rxcloud.capa.bff.hjson.inbound.parse.MyListener;
+import group.rxcloud.capa.bff.hjson.inbound.parse.BffParseListener;
 import group.rxcloud.capa.bff.inbound.Inbound;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -23,7 +23,7 @@ public class HJsonInbound implements Inbound<String, HJsonInvocationRequest> {
         CustomerJsonParser parser = new CustomerJsonParser(tokens);
         CustomerJsonParser.CustomerJsonContext ast = parser.customerJson();
         ParseTreeWalker parseTreeWalker = new ParseTreeWalker();
-        MyListener importListener = new MyListener();
+        BffParseListener importListener = new BffParseListener();
         parseTreeWalker.walk(importListener, ast);
         return new ArrayList<>(importListener.requestMap.values());
     }
