@@ -28,41 +28,36 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
 
     @Autowired
     private CapaRpcClient capaRpcClient;
-
-    private final ThreadLocal<ConcurrentHashMap<String, List<HJsonInvocationRequest>>> localDynamicParamsMapping;
-
-    private final ThreadLocal<ConcurrentHashMap<HJsonInvocationRequest, Integer>> serviceDynamicRequestParamCount;
-
-    private final ThreadLocal<ConcurrentHashMap<String, Object>> paramsSet;
-
-    private final ThreadLocal<CopyOnWriteArrayList<HJsonInvocationResponse>> responseList;
-
-    private final ThreadLocal<CountDownLatch> cyclicBarrierThreadLocal;
+//
+//    private final ThreadLocal<ConcurrentHashMap<String, List<HJsonInvocationRequest>>> localDynamicParamsMapping;
+//
+//    private final ThreadLocal<ConcurrentHashMap<HJsonInvocationRequest, Integer>> serviceDynamicRequestParamCount;
+//
+//    private final ThreadLocal<ConcurrentHashMap<String, Object>> paramsSet;
+//
+//    private final ThreadLocal<CopyOnWriteArrayList<HJsonInvocationResponse>> responseList;
+//
+//    private final ThreadLocal<CountDownLatch> cyclicBarrierThreadLocal;
 
     @Override
     public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) {
-        clearThreadLocal();
-        CountDownLatch cy = new CountDownLatch(invocationList.size());
-        cyclicBarrierThreadLocal.set(cy);
+        ConcurrentHashMap<String, List<HJsonInvocationRequest>> localParamsServiceMapping = new ConcurrentHashMap<>();
+        ConcurrentHashMap<HJsonInvocationRequest, Integer> serviceParamCountMapping = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, Object> parasmKeyValueMapping = new ConcurrentHashMap<>();
+        CopyOnWriteArrayList<HJsonInvocationResponse> reList = new CopyOnWriteArrayList<>();
+// 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
+        CountDownLatch cd = new CountDownLatch(invocationList.size());
         for (HJsonInvocationRequest request : invocationList) {
-            allocateService(request);
+            allocateService(request,localParamsServiceMapping,serviceParamCountMapping,parasmKeyValueMapping,reList,cd);
         }
         try {
-            boolean await = cy.await(500, TimeUnit.MILLISECONDS);
+            boolean await = cd.await(500, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        List<HJsonInvocationResponse> res = responseList.get();
+//        List<HJsonInvocationResponse> res = responseList.get();
 
-        return res;
-    }
-
-    private void clearThreadLocal() {
-        cyclicBarrierThreadLocal.remove();
-        localDynamicParamsMapping.remove();
-        serviceDynamicRequestParamCount.remove();
-        paramsSet.remove();
-        responseList.remove();
+        return reList;
     }
 
     public interface TaskService {
@@ -78,36 +73,19 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
         System.out.println("finish");
     }
     public HJsonInvoker() {
-        localDynamicParamsMapping = new ThreadLocal<>();
-
-        serviceDynamicRequestParamCount = new ThreadLocal<>();
-
-        paramsSet = new ThreadLocal<>();
-
-        responseList = new ThreadLocal<>();
-
-        cyclicBarrierThreadLocal = new ThreadLocal<>();
+//        localDynamicParamsMapping = new ThreadLocal<>();
+//
+//        serviceDynamicRequestParamCount = new ThreadLocal<>();
+//
+//        paramsSet = new ThreadLocal<>();
+//
+//        responseList = new ThreadLocal<>();
+//
+//        cyclicBarrierThreadLocal = new ThreadLocal<>();
 
     }
 
-    private void threadLocalReCheck() {
-        if (localDynamicParamsMapping.get() == null) {
-            ConcurrentHashMap<String, List<HJsonInvocationRequest>> tmpMap = new ConcurrentHashMap<>();
-            localDynamicParamsMapping.set(tmpMap);
-        }
-        if (serviceDynamicRequestParamCount.get() == null) {
-            ConcurrentHashMap<HJsonInvocationRequest, Integer> tmpMap2 = new ConcurrentHashMap<>();
-            serviceDynamicRequestParamCount.set(tmpMap2);
-        }
-        if (paramsSet.get() == null) {
-            ConcurrentHashMap<String, Object> tmpSet = new ConcurrentHashMap<>();
-            paramsSet.set(tmpSet);
-        }
-        if (responseList.get() == null) {
-            CopyOnWriteArrayList<HJsonInvocationResponse> re = new CopyOnWriteArrayList<>();
-            responseList.set(re);
-        }
-    }
+
 
     private Mono allocateService(HJsonInvocationRequest taskService,
                                  ConcurrentHashMap<String, List<HJsonInvocationRequest>> localParamsServiceMapping,
@@ -160,6 +138,7 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                 TypeRef.BYTE_ARRAY);
 
 //        responseMono = Mono.create((s)->{});
+
         if (taskService.sync()) {
 
             byte[] bytes = responseMono.block();
@@ -249,15 +228,5 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
         return response;
     }
 
-    public Mono allocateService(HJsonInvocationRequest taskService) {
-        threadLocalReCheck();
-        ConcurrentHashMap<String, List<HJsonInvocationRequest>> localParamsServiceMapping = localDynamicParamsMapping.get();
-        ConcurrentHashMap<HJsonInvocationRequest, Integer> serviceParamCountMapping = serviceDynamicRequestParamCount.get();
-        ConcurrentHashMap<String, Object> parasmKeyValueMapping = paramsSet.get();
-        CopyOnWriteArrayList<HJsonInvocationResponse> reList = responseList.get();
-// 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
-        CountDownLatch cd = cyclicBarrierThreadLocal.get();
-        return allocateService(taskService,localParamsServiceMapping,serviceParamCountMapping,parasmKeyValueMapping,reList,cd);
 
-    }
 }
