@@ -3,6 +3,7 @@ package group.rxcloud.capa.bff.hjson.outbound;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.domain.Context;
+import group.rxcloud.capa.bff.domain.DefaultContext;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
 import group.rxcloud.capa.bff.hjson.json.JsonValueMapper;
@@ -289,8 +290,7 @@ public class HJsonOutbound implements Outbound<
         JSONObject outbound = hJsonOutbound.outbound(
                 List.of(hJsonInvocationRequest, failure),
                 List.of(hJsonInvocationResponse),
-                new Context() {
-                });
+                new DefaultContext());
 
         System.out.println(outbound);
     }
