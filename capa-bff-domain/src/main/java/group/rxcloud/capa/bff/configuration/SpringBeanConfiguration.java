@@ -17,7 +17,8 @@ public class SpringBeanConfiguration {
 
     @Bean
     public CapaRpcClient capaRpcClient() {
-        CapaRpcClient capaRpcClient = new MyTmpCapaRpcClient();
+//        CapaRpcClient capaRpcClient = new MyTmpCapaRpcClient();
+        CapaRpcClient capaRpcClient =new CapaRpcClientBuilder().build();
         return capaRpcClient;
     }
 

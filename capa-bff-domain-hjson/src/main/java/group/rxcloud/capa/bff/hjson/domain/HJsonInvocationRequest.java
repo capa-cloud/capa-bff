@@ -4,8 +4,10 @@ package group.rxcloud.capa.bff.hjson.domain;
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.domain.InvocationRequest;
 import group.rxcloud.capa.bff.hjson.allocate.HJsonInvoker;
+import group.rxcloud.capa.bff.hjson.json.JsonValueMapper;
 import lombok.ToString;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,7 +38,9 @@ public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
     }
 
     public void replaceParam(String key, Object value) {
-
+        Map<String, Object> pMap = new HashMap<>();
+        pMap.put(key,value);
+        this.setData(JsonValueMapper.replaceValuesByParameters(this.getData(),pMap));
     }
 
     public boolean sync() {
