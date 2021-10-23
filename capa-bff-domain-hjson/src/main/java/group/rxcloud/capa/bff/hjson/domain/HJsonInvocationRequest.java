@@ -4,15 +4,15 @@ package group.rxcloud.capa.bff.hjson.domain;
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.domain.InvocationRequest;
 import group.rxcloud.capa.bff.hjson.allocate.ServiceAllocate;
+import lombok.ToString;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Author: KJ.ZHAO
  * Date: 2021/10/23 11:27
  */
+@ToString
 public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
         implements ServiceAllocate.TaskService {
     public static  final String SEPARATOR = ".";

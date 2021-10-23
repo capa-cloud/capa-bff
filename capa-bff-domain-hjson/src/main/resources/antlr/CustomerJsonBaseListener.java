@@ -123,6 +123,30 @@ public class CustomerJsonBaseListener implements CustomerJsonListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSingleRequestFieldValue(CustomerJsonParser.SingleRequestFieldValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSingleRequestFieldValue(CustomerJsonParser.SingleRequestFieldValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSingleResponseFieldValue(CustomerJsonParser.SingleResponseFieldValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSingleResponseFieldValue(CustomerJsonParser.SingleResponseFieldValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterValue(CustomerJsonParser.ValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
