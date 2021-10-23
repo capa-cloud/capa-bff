@@ -3,7 +3,7 @@ package test;
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.api.http.SpringBootCapaApiApplication;
 import group.rxcloud.capa.bff.domain.Context;
-import group.rxcloud.capa.bff.hjson.allocate.HJsonInvoker;
+import group.rxcloud.capa.bff.hjson.invoke.HJsonInvoker;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
 import org.junit.jupiter.api.Test;

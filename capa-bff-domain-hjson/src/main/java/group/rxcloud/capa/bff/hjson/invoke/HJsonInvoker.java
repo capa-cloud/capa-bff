@@ -1,7 +1,6 @@
-package group.rxcloud.capa.bff.hjson.allocate;
+package group.rxcloud.capa.bff.hjson.invoke;
 
 import com.alibaba.fastjson.JSONObject;
-import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
@@ -11,7 +10,6 @@ import group.rxcloud.capa.rpc.CapaRpcClient;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
 import group.rxcloud.cloudruntimes.utils.TypeRef;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;

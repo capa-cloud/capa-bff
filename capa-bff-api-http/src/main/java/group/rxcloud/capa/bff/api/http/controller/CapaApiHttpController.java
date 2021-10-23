@@ -1,7 +1,7 @@
 package group.rxcloud.capa.bff.api.http.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import group.rxcloud.capa.bff.hjson.allocate.HJsonInvoker;
+import group.rxcloud.capa.bff.hjson.invoke.HJsonInvoker;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
 import group.rxcloud.capa.bff.hjson.inbound.HJsonInbound;

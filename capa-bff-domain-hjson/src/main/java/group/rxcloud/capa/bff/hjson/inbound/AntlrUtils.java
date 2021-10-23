@@ -1,4 +1,4 @@
-package group.rxcloud.capa.bff.hjson;
+package group.rxcloud.capa.bff.hjson.inbound;
 
 public class AntlrUtils {
 
