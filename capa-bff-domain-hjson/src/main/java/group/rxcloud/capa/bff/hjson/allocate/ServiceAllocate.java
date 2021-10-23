@@ -1,8 +1,11 @@
 package group.rxcloud.capa.bff.hjson.allocate;
 
+import com.alibaba.fastjson.JSONObject;
+import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
+import group.rxcloud.capa.bff.hjson.json.JsonValueMapper;
 import group.rxcloud.capa.bff.invoke.Invoke;
 import group.rxcloud.capa.rpc.CapaRpcClient;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
@@ -34,7 +37,7 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
 
     private final ThreadLocal<ConcurrentHashMap<HJsonInvocationRequest, Integer>> serviceDynamicRequestParamCount;
 
-    private final ThreadLocal<ConcurrentHashMap<String, String>> paramsSet;
+    private final ThreadLocal<ConcurrentHashMap<String, Object>> paramsSet;
 
     private final ThreadLocal<CopyOnWriteArrayList<HJsonInvocationResponse>> responseList;
 
@@ -48,7 +51,7 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
             allocateService(request);
         }
         try {
-            cy.await();
+            boolean await = cy.await(500, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -67,14 +70,16 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
 
     public interface TaskService {
 
-
-        Map<String, String> params();
-
-        void replaceParam(String key, String value);
+        void replaceParam(String key, Object value);
 
         boolean sync();
     }
 
+    public static void main(String[] args) {
+        Mono m = Mono.just("asd");
+        Object block = m.block();
+        System.out.println("finish");
+    }
     public ServiceAllocate() {
         localDynamicParamsMapping = new ThreadLocal<>();
 
@@ -98,7 +103,7 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
             serviceDynamicRequestParamCount.set(tmpMap2);
         }
         if (paramsSet.get() == null) {
-            ConcurrentHashMap<String, String> tmpSet = new ConcurrentHashMap<>();
+            ConcurrentHashMap<String, Object> tmpSet = new ConcurrentHashMap<>();
             paramsSet.set(tmpSet);
         }
         if (responseList.get() == null) {
@@ -107,37 +112,35 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
         }
     }
 
-    public Mono allocateService(HJsonInvocationRequest taskService) {
-        threadLocalReCheck();
-        ConcurrentHashMap<String, List<HJsonInvocationRequest>> localParamsServiceMapping = localDynamicParamsMapping.get();
-        ConcurrentHashMap<HJsonInvocationRequest, Integer> serviceParamCountMapping = serviceDynamicRequestParamCount.get();
-        ConcurrentHashMap<String, String> parasmKeyValueMapping = paramsSet.get();
-        CopyOnWriteArrayList<HJsonInvocationResponse> reList = responseList.get();
+    private Mono allocateService(HJsonInvocationRequest taskService,
+                                 ConcurrentHashMap<String, List<HJsonInvocationRequest>> localParamsServiceMapping,
+                                 ConcurrentHashMap<HJsonInvocationRequest, Integer> serviceParamCountMapping,
+                                 ConcurrentHashMap<String, Object> parasmKeyValueMapping,
+                                 CopyOnWriteArrayList<HJsonInvocationResponse> reList,
+                                 CountDownLatch cd){
 
-        Map<String, String> params = taskService.params();
-        if (CollectionUtils.isEmpty(params)) {
-            return null;
-        }
+        Map<String, Object> requiredParams = taskService.getRequiredParams();
+
         boolean flag = false;
-        Set<Map.Entry<String, String>> entries = params.entrySet();
-        for (Map.Entry<String, String> param : entries) {
+        Set<Map.Entry<String, Object>> entries = requiredParams.entrySet();
+        for (Map.Entry<String, Object> param : entries) {
             //^#{[.]+}$
-            if (param != null && !StringUtils.isEmpty(param.getValue()) && param.getValue().matches("^#\\{.+}$")) {
-                if (paramsSet.get().containsKey(param.getKey())) {
-                    taskService.replaceParam(param.getKey(), param.getValue());
+            if (param != null && !StringUtils.isEmpty(param.getKey()) ) {
+                if (parasmKeyValueMapping.containsKey(param.getKey())) {
+                    taskService.replaceParam(param.getKey(), parasmKeyValueMapping.get(param.getKey()));
                     continue;
                 }
                 flag = true;
-                ConcurrentHashMap<String, List<HJsonInvocationRequest>> stringListHashMap = localDynamicParamsMapping.get();
+                ConcurrentHashMap<String, List<HJsonInvocationRequest>> stringListHashMap = localParamsServiceMapping;
                 if (stringListHashMap.get(param.getKey()) == null) {
                     List<HJsonInvocationRequest> list = new ArrayList<>();
                     list.add(taskService);
-                    Integer count = serviceDynamicRequestParamCount.get().get(taskService);
-                    serviceDynamicRequestParamCount.get().put(taskService, count == null ? 1 : count + 1);
+                    Integer count = serviceParamCountMapping.get(taskService);
+                    serviceParamCountMapping.put(taskService, count == null ? 1 : count + 1);
                     stringListHashMap.put(param.getKey(), list);
                 } else if (!stringListHashMap.get(param.getKey()).contains(taskService)) {
-                    Integer count = serviceDynamicRequestParamCount.get().get(taskService);
-                    serviceDynamicRequestParamCount.get().put(taskService, count == null ? 1 : count + 1);
+                    Integer count = serviceParamCountMapping.get(taskService);
+                    serviceParamCountMapping.put(taskService, count == null ? 1 : count + 1);
                     stringListHashMap.get(param.getKey()).add(taskService);
                 }
 
@@ -148,24 +151,87 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
             return null;
         }
         // 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
-        CountDownLatch cd = cyclicBarrierThreadLocal.get();
-        Mono<HashMap> responseMono = capaRpcClient.invokeMethod(
+//        CountDownLatch cd = cyclicBarrierThreadLocal.get();
+        Mono<JSONObject> responseMono = capaRpcClient.invokeMethod(
                 taskService.getAppId(),
                 taskService.getMethod(),
                 taskService.getData(),
                 HttpExtension.POST,
-//                taskService.getMetaData(),
-                TypeRef.get(HashMap.class));
+                taskService.getMetadata(),
+                TypeRef.get(JSONObject.class));
+
+//        responseMono = Mono.create((s)->{});
         if (taskService.sync()) {
+
+            JSONObject block = responseMono.block();
+            reList.add(new HJsonInvocationResponse(taskService, block));
+            Map<String, String> responseDataFormat = taskService.getResponseDataFormat();
+            if (responseDataFormat!=null && !responseDataFormat.isEmpty()){
+                Set<String> strings = responseDataFormat.keySet();
+                for (String path:strings){
+                    String nickName = responseDataFormat.get(path);
+                    // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
+                    Object obj = JsonValueMapper.findValueByPointPath(block, path);
+
+                    parasmKeyValueMapping.put(nickName,obj);
+
+                    List<HJsonInvocationRequest> listTmp = localParamsServiceMapping.get(nickName);
+                    localParamsServiceMapping.remove(nickName);
+                    if (!CollectionUtils.isEmpty(listTmp)){
+                        for (HJsonInvocationRequest re:listTmp){
+                            Map<String, Object> pMap = new HashMap<>();
+                            pMap.put(nickName,obj);
+                            re.setData(JsonValueMapper.replaceValuesByParameters(re.getData(),pMap));
+                            serviceParamCountMapping.put(re,serviceParamCountMapping.get(taskService)-1);
+                            if (serviceParamCountMapping.get(re)==0){
+                                allocateService(re,localParamsServiceMapping,serviceParamCountMapping,parasmKeyValueMapping,reList,cd);
+                            }
+                        }
+
+                    }
+
+
+                }
+            }
             cd.countDown();
-            HashMap block = responseMono.block();
-            // todo
-//            reList.add(new HJsonInvocationResponse(taskService, block));
         } else {
             responseMono.doOnSuccess((s) -> {
+
+                reList.add(new HJsonInvocationResponse(taskService, s));
+                Map<String, String> responseDataFormat = taskService.getResponseDataFormat();
+                if (responseDataFormat!=null && !responseDataFormat.isEmpty()){
+                    Set<String> strings = responseDataFormat.keySet();
+                    for (String path:strings){
+                        String nickName = responseDataFormat.get(path);
+                        // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
+                        Object obj = JsonValueMapper.findValueByPointPath(s, path);
+                        parasmKeyValueMapping.put(nickName,obj);
+
+                        List<HJsonInvocationRequest> listTmp = localParamsServiceMapping.get(nickName);
+                        localParamsServiceMapping.remove(nickName);
+                        if (!CollectionUtils.isEmpty(listTmp)){
+                            for (HJsonInvocationRequest re:listTmp){
+                                Map<String, Object> pMap = new HashMap<>();
+                                pMap.put(nickName,obj);
+                                re.setData(JsonValueMapper.replaceValuesByParameters(re.getData(),pMap));
+                                serviceParamCountMapping.put(re,serviceParamCountMapping.get(taskService)-1);
+                                if (serviceParamCountMapping.get(re)==0){
+                                    allocateService(re,localParamsServiceMapping,serviceParamCountMapping,parasmKeyValueMapping,reList,cd);
+                                }
+                            }
+
+                        }
+
+
+                    }
+                }
                 cd.countDown();
-                // todo
-//                reList.add(new HJsonInvocationResponse(taskService, s));
+            });
+
+            responseMono.doOnError((s)->{
+                s.printStackTrace();
+                cd.countDown();
+
             });
 
         }
@@ -173,6 +239,18 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
 
         return null;
 
+    }
+
+
+    public Mono allocateService(HJsonInvocationRequest taskService) {
+        threadLocalReCheck();
+        ConcurrentHashMap<String, List<HJsonInvocationRequest>> localParamsServiceMapping = localDynamicParamsMapping.get();
+        ConcurrentHashMap<HJsonInvocationRequest, Integer> serviceParamCountMapping = serviceDynamicRequestParamCount.get();
+        ConcurrentHashMap<String, Object> parasmKeyValueMapping = paramsSet.get();
+        CopyOnWriteArrayList<HJsonInvocationResponse> reList = responseList.get();
+// 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
+        CountDownLatch cd = cyclicBarrierThreadLocal.get();
+        return allocateService(taskService,localParamsServiceMapping,serviceParamCountMapping,parasmKeyValueMapping,reList,cd);
 
     }
 }

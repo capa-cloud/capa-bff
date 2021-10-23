@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.domain.InvocationRequest;
 import group.rxcloud.capa.bff.hjson.allocate.ServiceAllocate;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Author: KJ.ZHAO
@@ -13,6 +15,7 @@ import java.util.Map;
  */
 public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
         implements ServiceAllocate.TaskService {
+    public static  final String SEPARATOR = ".";
 
     /**
      * 需要补充的动态参数列表
@@ -24,18 +27,6 @@ public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
      */
     private Map<String, String> responseDataFormat;
 
-    public Map<String, String> params() {
-        return null;
-    }
-
-    public void replaceParam(String key, String value) {
-
-    }
-
-    public boolean sync() {
-        return false;
-    }
-
     public Map<String, Object> getRequiredParams() {
         return requiredParams;
     }
@@ -43,6 +34,15 @@ public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
     public void setRequiredParams(Map<String, Object> requiredParams) {
         this.requiredParams = requiredParams;
     }
+
+    public void replaceParam(String key, Object value) {
+
+    }
+
+    public boolean sync() {
+        return false;
+    }
+
 
     public Map<String, String> getResponseDataFormat() {
         return responseDataFormat;
