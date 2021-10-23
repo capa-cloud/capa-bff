@@ -1,39 +1,85 @@
 package group.rxcloud.capa.bff.configuration;
 
 import com.alibaba.fastjson.JSONObject;
+import group.rxcloud.capa.infrastructure.serializer.DefaultObjectSerializer;
+import group.rxcloud.capa.infrastructure.serializer.ObjectSerializer;
 import group.rxcloud.capa.rpc.CapaRpcClient;
-import group.rxcloud.capa.rpc.CapaRpcClientBuilder;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
 import group.rxcloud.cloudruntimes.domain.core.invocation.InvokeMethodRequest;
 import group.rxcloud.cloudruntimes.utils.TypeRef;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Configuration
 public class SpringBeanConfiguration {
 
-    @Bean
-    public CapaRpcClient capaRpcClient() {
-//        CapaRpcClient capaRpcClient = new MyTmpCapaRpcClient();
-        CapaRpcClient capaRpcClient =new CapaRpcClientBuilder().build();
-        return capaRpcClient;
+    @Component
+    public static class HttpInvokeClient {
+
+        private final HttpClient client;
+
+        public HttpInvokeClient() {
+            client = HttpClient.newBuilder()
+                    .version(HttpClient.Version.HTTP_1_1)
+                    .followRedirects(HttpClient.Redirect.NORMAL)
+                    .connectTimeout(Duration.ofSeconds(60))
+                    .build();
+        }
+
+        public CompletableFuture<HttpResponse<byte[]>> send(String url, String json) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+            return client.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray());
+        }
     }
 
-    class MyTmpCapaRpcClient implements CapaRpcClient {
+    @Component
+    public static class MyTmpCapaRpcClient implements CapaRpcClient {
+
+        String CTRIP_SERVICE_MESH_TEMPLATE = "http://{serviceId}.soa.mesh/{operation}";
+
+        @Autowired
+        private HttpInvokeClient httpInvokeClient;
+
+        private ObjectSerializer objectSerializer = new DefaultObjectSerializer();
 
         @Override
         public <T> Mono<T> invokeMethod(String appId, String methodName, Object data, HttpExtension httpExtension, Map<String, String> metadata, TypeRef<T> type) {
-            JSONObject res = new JSONObject();
+            // generate service mesh http url
+            final String serviceMeshHttpUrl = CTRIP_SERVICE_MESH_TEMPLATE
+                    .replace("{serviceId}", appId.toLowerCase())
+                    .replace("{operation}", methodName.toLowerCase());
+
             if (data instanceof JSONObject) {
-                res.put("name", "zhangsan");
-                res.put("age", 15);
-            } else {
-                res.put("mes", "errr!!!!");
+                String json = ((JSONObject) data).toJSONString();
+                System.out.println("invokeMethod request:" + json);
+
+                CompletableFuture<HttpResponse<byte[]>> completableFuture = httpInvokeClient.send(serviceMeshHttpUrl, json);
+                CompletableFuture<T> byteFuture = completableFuture.thenApply(httpResponse -> {
+                    final byte[] httpResponseBody = httpResponse.body();
+                    System.out.println("invokeMethod response:" + new String(httpResponseBody));
+                    try {
+                        return objectSerializer.deserialize(httpResponseBody, type);
+                    } catch (Exception e) {
+                        System.out.println("[ERROR] invokeMethod exception" + e);
+                        return null;
+                    }
+                });
+                return Mono.fromCompletionStage(byteFuture);
             }
-            return Mono.just((T) res);
+            throw new RuntimeException("[ERROR] invokeMethod only supported JSONObject");
         }
 
         @Override
