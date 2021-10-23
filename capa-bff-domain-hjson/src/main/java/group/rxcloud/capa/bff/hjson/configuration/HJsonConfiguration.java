@@ -9,10 +9,4 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class HJsonConfiguration {
-
-    @Bean(value = "allocateThreadPool")
-    public ThreadPoolExecutor threadPool() {
-        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
-        return threadPool;
-    }
 }

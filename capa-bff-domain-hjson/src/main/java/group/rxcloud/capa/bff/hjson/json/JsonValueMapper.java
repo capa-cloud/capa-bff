@@ -106,6 +106,9 @@ public class JsonValueMapper {
             else {
                 object = target.get(path);
             }
+            if (target == null) {
+                return null;
+            }
         }
         return object;
     }

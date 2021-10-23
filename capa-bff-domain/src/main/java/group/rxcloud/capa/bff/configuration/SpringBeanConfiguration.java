@@ -17,22 +17,23 @@ public class SpringBeanConfiguration {
 
     @Bean
     public CapaRpcClient capaRpcClient() {
-        CapaRpcClient capaRpcClient = new MyTmpCapaRpcClient();
+//        CapaRpcClient capaRpcClient = new MyTmpCapaRpcClient();
+        CapaRpcClient capaRpcClient =new CapaRpcClientBuilder().build();
         return capaRpcClient;
     }
 
-    class MyTmpCapaRpcClient implements CapaRpcClient{
+    class MyTmpCapaRpcClient implements CapaRpcClient {
 
         @Override
         public <T> Mono<T> invokeMethod(String appId, String methodName, Object data, HttpExtension httpExtension, Map<String, String> metadata, TypeRef<T> type) {
             JSONObject res = new JSONObject();
-            if (data instanceof JSONObject){
-                res.put("name","zhangsan");
-                res.put("age",15);
-            }else {
-                res.put("mes","errr!!!!");
+            if (data instanceof JSONObject) {
+                res.put("name", "zhangsan");
+                res.put("age", 15);
+            } else {
+                res.put("mes", "errr!!!!");
             }
-            return Mono.just((T)res);
+            return Mono.just((T) res);
         }
 
         @Override
