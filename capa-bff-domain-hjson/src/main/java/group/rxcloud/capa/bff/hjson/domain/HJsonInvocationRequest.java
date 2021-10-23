@@ -40,7 +40,7 @@ public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
     }
 
     public boolean sync() {
-        return false;
+        return true;
     }
 
 

@@ -27,12 +27,12 @@ public class SpringBeanConfiguration {
         public <T> Mono<T> invokeMethod(String appId, String methodName, Object data, HttpExtension httpExtension, Map<String, String> metadata, TypeRef<T> type) {
             JSONObject res = new JSONObject();
             if (data instanceof JSONObject){
-
+                res.put("name","zhangsan");
+                res.put("age",15);
             }else {
                 res.put("mes","errr!!!!");
             }
-
-            return null;
+            return Mono.just((T)res);
         }
 
         @Override
