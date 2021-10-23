@@ -1,0 +1,612 @@
+
+# the definition of directive
+directive @fetchSource(name: String!, sourceConvert:String) on FIELD
+directive @skipBy(predicate: String!) on FIELD | INLINE_FRAGMENT | FRAGMENT_SPREAD
+directive @includeBy(predicate: String!) on FIELD | INLINE_FRAGMENT | FRAGMENT_SPREAD
+directive @mock(value: String!) on FIELD
+directive @filter(predicate: String!) on FIELD
+directive @sort(key: String!,reversed: Boolean = false) on FIELD
+directive @distinct(comparator:String) on FIELD
+directive @sortBy(comparator: String!, reversed: Boolean = false) on FIELD
+directive @map(mapper:String!, dependencySources:[String!]) on FIELD
+directive @argumentTransform(argumentName:String!, operateType:ParamTransformType = MAP, expression:String, dependencySources:[String!]) on FIELD
+#directive @argumentTransform(argument:String!, operaType:ParamTransformType, expression:String, dependencySource:String) repeatable on FIELD
+enum ParamTransformType{
+    MAP
+    FILTER
+    LIST_MAP
+}
+
+
+
+query repeatableArgumentTest($userId:Int, $clientVersion:String){
+    consumer{
+        userInfo(userId: $userId,clientVersion: $clientVersion)
+        @argumentTransform(argumentName: "userId",expression: "userId*10")
+        @argumentTransform(argumentName: "clientVersion", expression: "clientVersion+'Plus'")
+        {
+            userId
+            name
+            clientVersion
+        }
+    }
+}
+
+
+query defaultOperatorType($itemIds:[Int]){
+    commodity{
+        itemList(itemIds: $itemIds){
+            itemId
+            sellerId @fetchSource(name: "sellerIds")
+        }
+    }
+
+    consumer{
+        userInfoList(userIds: 1)
+        @argumentTransform(argumentName: "userIds" ,expression: "sellerIds",dependencySources: ["sellerIds"])
+        {
+            userId
+            name
+        }
+
+        userInfo(userId: 1)
+        @argumentTransform(argumentName: "userId",expression: "userId*2")
+        {
+            userId
+            name
+        }
+    }
+}
+
+
+query nestedFetchSource_case01($itemIds:[Int]){
+    commodity{
+        itemList(itemIds: $itemIds){
+            skuList{
+                itemId
+                skuId
+                sellerId @fetchSource(name:"sellerIds")
+            }
+        }
+    }
+
+    consumer{
+        userInfoList(userIds: 1)
+        @argumentTransform(argumentName: "userIds",operateType: MAP,expression: "sellerIds",dependencySources: ["sellerIds"])
+        {
+            userId
+            name
+        }
+    }
+}
+
+query skipByTest_exceptionQueryTest01($userId: Int) {
+    consumer{
+        userInfo(userId: $userId)
+        @skipBy(predicate: "userId+18")
+        {
+            userId
+        }
+    }
+}
+
+query skipByTest_FragmentWithSkip($userId: Int) {
+    consumer{
+        userInfo(userId: $userId) {
+            userId
+            ...skipUserInfo
+        }
+    }
+}
+
+fragment skipUserInfo on User{
+    email @skipBy(predicate: "userId<18")
+}
+
+query skipByTest_fragmentSpreadTest01($userId: Int) {
+    consumer{
+        userInfo(userId: $userId) {
+            userId
+            ...userinfo @skipBy(predicate: "userId>18")
+        }
+
+        notSkipUserInfo: userInfo(userId: $userId) {
+            userId
+            ...userinfo @skipBy(predicate: "userId<18")
+        }
+    }
+}
+
+# 跟 @skip 和 @include 保持一致，FRAGMENT_DEFINITION 不进行判断
+fragment userinfo on User{
+    age
+    name
+    email
+}
+
+query skipByTest_inlineFragmentTest01($userId: Int) {
+    consumer{
+        userInfo(userId: $userId) {
+            userId
+            ... @skipBy(predicate: "userId>18") {
+                age
+                name
+                email
+            }
+        }
+
+        notSkipUserInfo: userInfo(userId: $userId) {
+            userId
+            ... @skipBy(predicate: "userId<18") {
+                age
+                name
+                email
+            }
+        }
+    }
+}
+
+query distinctSimpleCase_notSetComparator($userIds:[Int]){
+    consumer{
+        distinctUserInfoList: userInfoList(userIds: $userIds)
+        @distinct
+        {
+            userId
+            age
+        }
+
+        userInfoList(userIds: $userIds)
+        {
+            userId
+            age
+        }
+    }
+}
+
+
+query distinctSimpleCase_01($userIds:[Int]){
+    consumer{
+        distinctUserInfoList: userInfoList(userIds: $userIds)
+        @distinct(comparator: "age")
+        {
+            userId
+            age
+        }
+
+        userInfoList(userIds: $userIds)
+        {
+            userId
+            age
+        }
+    }
+}
+
+
+query parseArgumentFromVariableSimpleCase_01($userIds:[Int]){
+    consumer{
+        userInfoList(userIds: $userIds){
+            userId
+            age
+            name
+        }
+
+        # get argument from variable, 'testUserInfoList' haven't use any variable
+        testUserInfoList: userInfoList(userIds: 1)
+        @argumentTransform(argumentName: "userIds",operateType: MAP,expression: "userIds")
+        {
+            userId
+            age
+            name
+        }
+    }
+}
+
+
+#
+# 假设存在如下查询：刚开始只查询了 someInfo 字段，后续查询commodity字段的时候，
+#               希望从之前的请求变量userIdAnditemIdPair解析参数，而非调用方在硬编码添加参数
+#
+#query parseArgumentFromVariable_case01($userIdAnditemIdPair:Any){
+#
+#    someInfo: variableBlackhole(anyArgument: $userIdAnditemIdPair){
+#        ignored
+#    }
+#
+#    commodity{
+#        itemList(itemIds: 1)
+#        @argumentTransform(argumentName: "itemIds",operateType: MAP,expression: "mapValues(userIdAnditemIdPair)")
+#        {
+#            itemId
+#            name
+#            salePrice
+#        }
+#    }
+#}
+
+query queryMoreDetail_case01($userId:Int,$clientVersion:String){
+    consumer{
+        userInfo(
+            userId: $userId,
+            # 受限于graphql原生语法校验，变量必须被明确的作为参数使用
+            clientVersion: $clientVersion){
+            userId
+            age
+            name
+            # 只在v2版本的客户端中展示
+            email @includeBy(predicate: "clientVersion == 'v2'")
+        }
+    }
+}
+
+
+query sortItemListBySaleAmount($itemIdList:[Int]){
+    commodity{
+        itemList(itemIds: $itemIdList)
+        @sortBy(comparator: "saleAmount",reversed: true)
+        {
+            itemId
+            name
+            saleAmount
+        }
+
+        originalItemList: itemList(itemIds: $itemIdList){
+            itemId
+            name
+            saleAmount
+        }
+    }
+}
+
+
+query filterUnSaleCommodity($ItemIds:[Int]){
+    commodity{
+        filteredItemList: itemList(itemIds: $ItemIds)
+        @filter(predicate: "onSale")
+        {
+            itemId
+            onSale
+            name
+            salePrice
+        }
+    }
+}
+
+
+query sourceInList_case01($itemIds:[Int]){
+    commodity{
+        itemList(itemIds: $itemIds){
+            # 保存商品的卖家id，结果为 List<Integer>
+            sellerId @fetchSource(name: "sellerIdList")
+            name
+            saleAmount
+            salePrice
+        }
+    }
+
+    consumer{
+        userInfoList(userIds: 1)
+        @argumentTransform(argumentName: "userIds", # 对参数 userIds 进行转换
+            operateType: MAP, # 操作类型为参数整体转换
+            expression: "sellerIdList", # 表达式表示使用表达式变量 sellerIdList 对参数作整体替换
+            dependencySources: ["sellerIdList"] # 依赖了全局变量 sellerIdList
+        ){
+            userId
+            name
+            age
+        }
+    }
+}
+
+
+query simpleIncludeBy_case01($userId:Int){
+    consumer{
+        userInfo(userId: $userId){
+            userId
+            name @includeBy(predicate: "userId!=2")
+        }
+    }
+}
+
+
+query filterPrimitiveType_case01{
+    marketing{
+        coupon(couponId: 1){
+            bindingItemIds @filter(predicate: "ele%2 == 0")
+        }
+    }
+}
+
+
+query filter_case01{
+    commodity{
+        itemList(itemIds: [9,11,10,12])
+        @filter(predicate: "!isContainBindingItemIds")
+        {
+            isContainBindingItemIds:onSale @map(mapper: "listContain(bindingItemIds,itemId)",dependencySources: "bindingItemIds")
+            itemId
+            name
+            salePrice
+        }
+    }
+
+    marketing{
+        coupon(couponId: 1){
+            bindingItemIds @fetchSource(name: "bindingItemIds")
+        }
+    }
+}
+
+
+query skipBy_case01($userId:Int){
+    consumer{
+        userInfo(userId: $userId)
+        # the userInfo field would not be queried if 'userId>100' is true
+        @skipBy(predicate: "userId>100")
+        {
+            userId
+            name
+        }
+    }
+}
+
+query includeBy_case01($userId:Int){
+    consumer{
+        userInfo(userId: $userId)
+        # the userInfo field will be queried if 'userId>100' is true
+        @includeBy(predicate: "userId>100")
+        {
+            userId
+            name
+        }
+    }
+}
+
+
+
+query sortResult_case01{
+    commodity{
+        itemList(itemIds: [1,2,3,4])
+        {
+            itemId
+            sortKey: itemId @map(mapper: "itemId/2")
+            salePrice
+            saleAmount(itemId: 1)
+        }
+    }
+}
+
+# 有数据依赖的排序
+query sortByWithSource_case01{
+    commodity{
+        itemList(itemIds: [9,11,10,12])
+        @sortBy(comparator: "!isContainBindingItemIds")
+        {
+            isContainBindingItemIds:onSale @map(mapper: "listContain(bindingItemIds,itemId)",dependencySources: "bindingItemIds")
+            itemId
+            name
+            salePrice
+        }
+    }
+
+    marketing{
+        coupon(couponId: 1){
+            bindingItemIds @fetchSource(name: "bindingItemIds")
+        }
+    }
+}
+
+
+# 表达式排序
+query sortByCase_01{
+    consumer{
+        userInfoList(userIds: [1,2,3,4])
+        @sortBy(comparator: "userId%2",reversed: true)
+        {
+            userId
+            name
+        }
+    }
+}
+
+# 简单排序
+query sortCase_01{
+    consumer{
+        userInfoList(userIds: [3,4,1,2])
+        @sort(key: "userId",reversed: true)
+        {
+            userId
+            name
+        }
+    }
+}
+
+
+# 参数拼接
+query userNewInfo($userId: Int){
+    consumer{
+        isNewUser(redisKey: "",userId: $userId)
+        # 将参数拼接为 redis 的key，fashion:shoes:{userId}
+        @argumentTransform(argumentName: "redisKey",operateType: MAP ,expression: "'fashion:shoes:' + str(userId)")
+        {
+            userId
+            isNewUser
+            sceneKey
+        }
+    }
+}
+
+
+# 父子路径上有 @fetchSource
+query sourceOnAncestorPath_case01{
+    consumer{
+        userInfo(userId: 2)
+        @fetchSource(name: "userInfo")
+        {
+            userId @fetchSource(name: "userId")
+        }
+    }
+
+    commodity{
+        item(itemId: 1){
+            itemId
+            userId: itemId @map(mapper: "userId",dependencySources: "userId")
+            userIdInUserInfo: itemId @map(mapper: "userInfo.userId",dependencySources: "userInfo")
+        }
+    }
+}
+
+# 父子路径上有 @fetchSource，结果均为null
+query sourceOnAncestorPath_case02{
+    consumer{
+        userInfo
+        @fetchSource(name: "userInfo")
+        {
+            userId @fetchSource(name: "userId")
+        }
+    }
+
+    commodity{
+        item(itemId: 1){
+            itemId
+            userId: itemId @map(mapper: "userId",dependencySources: "userId")
+            userIdInUserInfo: itemId @map(mapper: "userInfo.userId",dependencySources: "userInfo")
+        }
+    }
+}
+
+
+# 查找券信息和列表商品信息；使用 @mapper 拼接券的描述文案；如果商品绑定了券则返回券后价和是否绑定的标识
+query calculateCouponPrice_Case01 ($couponId: Int, $itemIds: [Int]){
+
+    marketing{
+        coupon(couponId: $couponId)
+        @fetchSource(name: "itemCouponInfo",sourceConvert: "list2MapWithAssignedValue('bindingItemIds','price')")
+        {
+            base
+            price
+            bindingItemIds
+            desc: couponText @map(mapper: "'满' + base + '减' + price")
+        }
+    }
+
+    commodity{
+        itemList(itemIds: $itemIds){
+            itemId
+            name
+            salePrice
+            isUsedCoupon: onSale @map(dependencySources: "itemCouponInfo",mapper: "seq.get(itemCouponInfo,itemId)!=nil")
+            # 券后价
+            couponPrice: salePrice @map(dependencySources: "itemCouponInfo",mapper: "salePrice - (seq.get(itemCouponInfo,itemId) == nil? 0:seq.get(itemCouponInfo,itemId)) ")
+        }
+    }
+}
+
+
+query sourceConvert_case01 ($itemIds: [Int]){
+
+    commodity{
+        itemList(itemIds: $itemIds){
+            itemId
+            sellerId @fetchSource(name: "sellerIds",sourceConvert: "filter(sellerId,seq.gt(3))")
+            name
+            salePrice
+        }
+    }
+
+    consumer{
+        userInfoList(userIds: 1)
+        @argumentTransform(argumentName: "userIds",operateType: MAP,expression: "sellerIds", dependencySources: ["sellerIds"])
+        {
+            userId
+            age
+            name
+        }
+    }
+}
+
+## 查询某个红包可用的商品集合信息，并过滤掉下架的商品
+query getItemListBindingCouponIdAndFilterUnSaleItems ( $couponId: Int) {
+    commodity{
+        itemList(itemIds: 1)
+        @argumentTransform(argumentName: "itemIds", operateType: MAP,dependencySources: "itemIdList",expression: "itemIdList")
+        @filter(predicate: "onSale")
+        {
+            itemId
+            name
+            salePrice
+            onSale
+        }
+    }
+
+    marketing{
+        coupon(couponId: $couponId){
+            bindingItemIds
+            @fetchSource(name: "itemIdList")
+        }
+    }
+}
+
+
+# 过滤掉该券不可用的参数，然后在请求下游数据源
+query filterItemListByBindingCouponIdAndFilterUnSaleItems ( $couponId: Int,$itemIds: [Int]) {
+    commodity{
+        itemList(itemIds: $itemIds)
+        @argumentTransform(argumentName: "itemIds", operateType: FILTER,dependencySources: "itemIdList",expression: "listContain(itemIdList,ele)")
+        {
+            itemId
+            name
+            salePrice
+            onSale
+        }
+    }
+
+    marketing{
+        coupon(couponId: $couponId){
+            bindingItemIds
+            @fetchSource(name: "itemIdList")
+        }
+    }
+}
+
+# 对参数进行处理
+query mapListArgument($itemIds: [Int]){
+    commodity{
+        itemList(itemIds: $itemIds)
+        @argumentTransform(argumentName: "itemIds",operateType: LIST_MAP,expression: "ele*10")
+        {
+            itemId
+            name
+        }
+    }
+}
+
+
+# 如果用户不在 ab实验实验组区间[0,3]内，则对其查看的页面不展示优惠券、即不请求券数据
+#query abUserForCouponAcquire($userId: Int, $couponId: Int,$abKey:String){
+#
+#    marketing
+#    @skipBy(predicate: "abValue <= 3",dependencySources: "abValue")
+#    {
+#        coupon(couponId: $couponId){
+#            couponId
+#            couponText
+#            price
+#        }
+#    }
+#
+#    toolInfo{
+#        abInfo(userId: $userId,abKey:$abKey) @fetchSource(name: "abValue")
+#    }
+#}
+
+
+# moc
+query mockEmail{
+    consumer{
+        userInfo(userId: 1){
+            userId
+            email @mock(value: "mockedValue@foxmail.com")
+        }
+    }
+}
+
