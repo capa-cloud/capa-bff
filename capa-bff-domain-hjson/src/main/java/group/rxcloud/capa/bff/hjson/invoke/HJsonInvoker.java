@@ -46,6 +46,9 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
     @Override
     public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) {
         log.info(String.format("title: invoke start  invocationList: %s",JSONObject.toJSONString(invocationList)));
+        if (invocationList!=null && invocationList.size()>=10){
+            return new ArrayList<>();
+        }
         ConcurrentHashMap<String, List<HJsonInvocationRequest>> localParamsServiceMapping = new ConcurrentHashMap<>();
         ConcurrentHashMap<HJsonInvocationRequest, Integer> serviceParamCountMapping = new ConcurrentHashMap<>();
         ConcurrentHashMap<String, Object> parasmKeyValueMapping = new ConcurrentHashMap<>();
