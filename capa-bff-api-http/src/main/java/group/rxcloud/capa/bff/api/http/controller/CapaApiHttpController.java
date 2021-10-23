@@ -1,10 +1,11 @@
 package group.rxcloud.capa.bff.api.http.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import group.rxcloud.capa.bff.hjson.invoke.HJsonInvoker;
+import group.rxcloud.capa.bff.domain.DefaultContext;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
 import group.rxcloud.capa.bff.hjson.inbound.HJsonInbound;
+import group.rxcloud.capa.bff.hjson.invoke.HJsonInvoker;
 import group.rxcloud.capa.bff.hjson.outbound.HJsonOutbound;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,12 +27,18 @@ public class CapaApiHttpController {
     private HJsonInvoker hJsonInvoker;
 
     @RequestMapping(value = "/capabff")
-    public @ResponseBody String bff(@RequestBody String request) throws Exception {
-        HJsonInbound hJsonInbound = new HJsonInbound();
-        List<HJsonInvocationRequest> hJsonInvocationRequests = hJsonInbound.inbound(request, null);
-        List<HJsonInvocationResponse> hJsonInvocationResponses = hJsonInvoker.invoke(hJsonInvocationRequests, null);
-        JSONObject outbound = new HJsonOutbound().outbound(hJsonInvocationRequests, hJsonInvocationResponses, null);
+    public @ResponseBody
+    String bff(@RequestBody String request) throws Exception {
+        DefaultContext context = new DefaultContext();
 
-        return outbound.toJSONString();
+        HJsonInbound hJsonInbound = new HJsonInbound();
+        HJsonOutbound hJsonOutbound = new HJsonOutbound();
+
+        List<HJsonInvocationRequest> hJsonInvocationRequests = hJsonInbound.inbound(request, context);
+        List<HJsonInvocationResponse> hJsonInvocationResponses = hJsonInvoker.invoke(hJsonInvocationRequests, context);
+        JSONObject outbound = hJsonOutbound.outbound(hJsonInvocationRequests, hJsonInvocationResponses, context);
+
+        String responseStr = outbound.toJSONString();
+        return responseStr;
     }
 }

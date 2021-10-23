@@ -1,5 +1,6 @@
 package group.rxcloud.capa.bff.hjson.invoke;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
@@ -24,8 +25,6 @@ import java.util.concurrent.*;
  */
 @Component
 public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonInvocationResponse> {
-    @Autowired
-    private ThreadPoolExecutor threadPoolExecutor;
 
     @Autowired
     private CapaRpcClient capaRpcClient;
@@ -40,6 +39,7 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
 
     private final ThreadLocal<CountDownLatch> cyclicBarrierThreadLocal;
 
+    @Override
     public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) {
         clearThreadLocal();
         CountDownLatch cy = new CountDownLatch(invocationList.size());
@@ -151,26 +151,28 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
         }
         // 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
 //        CountDownLatch cd = cyclicBarrierThreadLocal.get();
-        Mono<JSONObject> responseMono = capaRpcClient.invokeMethod(
+        Mono<byte[]> responseMono = capaRpcClient.invokeMethod(
                 taskService.getAppId(),
                 taskService.getMethod(),
                 taskService.getData(),
                 HttpExtension.POST,
                 taskService.getMetadata(),
-                TypeRef.get(JSONObject.class));
+                TypeRef.BYTE_ARRAY);
 
 //        responseMono = Mono.create((s)->{});
         if (taskService.sync()) {
 
-            JSONObject block = responseMono.block();
-            reList.add(new HJsonInvocationResponse(taskService, block));
+            byte[] bytes = responseMono.block();
+            JSONObject response = generateResponseObj(bytes);
+
+            reList.add(new HJsonInvocationResponse(taskService, response));
             Map<String, String> responseDataFormat = taskService.getResponseDataFormat();
             if (responseDataFormat!=null && !responseDataFormat.isEmpty()){
                 Set<String> strings = responseDataFormat.keySet();
                 for (String path:strings){
                     String nickName = responseDataFormat.get(path);
                     // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
-                    Object obj = JsonValueMapper.findValueByPointPath(block, path);
+                    Object obj = JsonValueMapper.findValueByPointPath(response, path);
 
                     parasmKeyValueMapping.put(nickName,obj);
 
@@ -194,16 +196,17 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
             }
             cd.countDown();
         } else {
-            responseMono.doOnSuccess((s) -> {
+            responseMono.doOnSuccess((bytes) -> {
+                JSONObject response = generateResponseObj(bytes);
 
-                reList.add(new HJsonInvocationResponse(taskService, s));
+                reList.add(new HJsonInvocationResponse(taskService, response));
                 Map<String, String> responseDataFormat = taskService.getResponseDataFormat();
                 if (responseDataFormat!=null && !responseDataFormat.isEmpty()){
                     Set<String> strings = responseDataFormat.keySet();
                     for (String path:strings){
                         String nickName = responseDataFormat.get(path);
                         // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
-                        Object obj = JsonValueMapper.findValueByPointPath(s, path);
+                        Object obj = JsonValueMapper.findValueByPointPath(response, path);
                         parasmKeyValueMapping.put(nickName,obj);
 
                         List<HJsonInvocationRequest> listTmp = localParamsServiceMapping.get(nickName);
@@ -240,6 +243,11 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
 
     }
 
+    private JSONObject generateResponseObj(byte[] block) {
+        String responseStr = new String(block);
+        JSONObject response = JSON.parseObject(responseStr);
+        return response;
+    }
 
     public Mono allocateService(HJsonInvocationRequest taskService) {
         threadLocalReCheck();
