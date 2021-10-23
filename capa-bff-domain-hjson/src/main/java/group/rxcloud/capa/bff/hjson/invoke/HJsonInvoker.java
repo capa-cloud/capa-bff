@@ -24,8 +24,6 @@ import java.util.concurrent.*;
  */
 @Component
 public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonInvocationResponse> {
-    @Autowired
-    private ThreadPoolExecutor threadPoolExecutor;
 
     @Autowired
     private CapaRpcClient capaRpcClient;
