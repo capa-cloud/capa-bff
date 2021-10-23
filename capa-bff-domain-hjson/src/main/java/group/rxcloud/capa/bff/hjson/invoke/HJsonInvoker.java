@@ -10,6 +10,7 @@ import group.rxcloud.capa.bff.invoke.Invoke;
 import group.rxcloud.capa.rpc.CapaRpcClient;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
 import group.rxcloud.cloudruntimes.utils.TypeRef;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -23,6 +24,7 @@ import java.util.concurrent.*;
  * Author: KJ.ZHAO
  * Date: 2021/10/22 13:56
  */
+@Slf4j
 @Component
 public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonInvocationResponse> {
 
@@ -39,8 +41,10 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
 //
 //    private final ThreadLocal<CountDownLatch> cyclicBarrierThreadLocal;
 
+
     @Override
     public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) {
+        log.info(String.format("title: invoke start  invocationList: %s",JSONObject.toJSONString(invocationList)));
         ConcurrentHashMap<String, List<HJsonInvocationRequest>> localParamsServiceMapping = new ConcurrentHashMap<>();
         ConcurrentHashMap<HJsonInvocationRequest, Integer> serviceParamCountMapping = new ConcurrentHashMap<>();
         ConcurrentHashMap<String, Object> parasmKeyValueMapping = new ConcurrentHashMap<>();
@@ -141,8 +145,14 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
 
         if (taskService.sync()) {
 
-            byte[] bytes = responseMono.block();
-            JSONObject response = generateResponseObj(bytes);
+            JSONObject response = null;
+            try {
+                byte[] bytes = responseMono.block();
+                response = generateResponseObj(bytes);
+            } catch (Exception e) {
+                log.error(String.format("title: invoke err  taskService: %s",JSONObject.toJSONString(taskService)),e);
+                return null;
+            }
 
             reList.add(new HJsonInvocationResponse(taskService, response));
             Map<String, String> responseDataFormat = taskService.getResponseDataFormat();
@@ -152,7 +162,8 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                     String nickName = responseDataFormat.get(path);
                     // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
                     Object obj = JsonValueMapper.findValueByPointPath(response, path);
-
+                    nickName = nickName==null?"":nickName;
+                    obj = obj==null?new JSONObject():obj;
                     parasmKeyValueMapping.put(nickName,obj);
 
                     List<HJsonInvocationRequest> listTmp = localParamsServiceMapping.get(nickName);
@@ -186,6 +197,9 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                         String nickName = responseDataFormat.get(path);
                         // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
                         Object obj = JsonValueMapper.findValueByPointPath(response, path);
+                        if (obj==null || nickName==null){
+                            continue;
+                        }
                         parasmKeyValueMapping.put(nickName,obj);
 
                         List<HJsonInvocationRequest> listTmp = localParamsServiceMapping.get(nickName);
