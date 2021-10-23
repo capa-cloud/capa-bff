@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>capa-bff-domain-graphql</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

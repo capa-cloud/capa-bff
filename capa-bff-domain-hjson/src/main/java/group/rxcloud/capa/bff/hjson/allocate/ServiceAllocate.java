@@ -2,6 +2,7 @@ package group.rxcloud.capa.bff.hjson.allocate;
 
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.domain.Context;
+import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
 import group.rxcloud.capa.bff.invoke.Invoke;
@@ -41,7 +42,6 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
 
     private final ThreadLocal<CountDownLatch> cyclicBarrierThreadLocal;
 
-    @Override
     public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) {
         clearThreadLocal();
         CountDownLatch cy = new CountDownLatch(invocationList.size());
