@@ -1,6 +1,6 @@
 package group.rxcloud.capa.bff.allocate;
 
-import group.rxcloud.capa.bff.domain.BffApiDomain;
+import group.rxcloud.capa.bff.domain.InvocationResquest;
 import group.rxcloud.capa.rpc.CapaRpcClient;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
 import group.rxcloud.cloudruntimes.utils.TypeRef;
@@ -32,7 +32,7 @@ public final class ServiceAllocate {
 
     public interface TaskService{
 
-        BffApiDomain generateDomainDto();
+        InvocationResquest generateDomainDto();
 
         Map<String, String> params();
 
@@ -100,13 +100,13 @@ public final class ServiceAllocate {
         if (flag){
             return null;
         }
-        BffApiDomain bffApiDomain = taskService.generateDomainDto();
+        InvocationResquest invocationResquest = taskService.generateDomainDto();
         // 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
         if (taskService.sync()){
             Mono<HashMap> responseMono = capaRpcClient.invokeMethod(
-                    bffApiDomain.getAppId(),
-                    bffApiDomain.getMethod(),
-                    bffApiDomain.getData(),
+                    invocationResquest.getAppId(),
+                    invocationResquest.getMethod(),
+                    invocationResquest.getData(),
                     HttpExtension.POST,
                     TypeRef.get(HashMap.class));
 

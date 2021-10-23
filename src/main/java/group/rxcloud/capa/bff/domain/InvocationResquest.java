@@ -1,12 +1,16 @@
 package group.rxcloud.capa.bff.domain;
 
-public class BffApiDomain {
+import java.util.Map;
+
+public abstract class InvocationResquest<T> {
 
     private String appId;
 
     private String method;
 
-    private Object data;
+    private T data;
+
+    private Map<String, String> metadata;
 
     public String getAppId() {
         return appId;
@@ -24,11 +28,19 @@ public class BffApiDomain {
         this.method = method;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
     }
 }
