@@ -9,17 +9,12 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>capa-bff-api-http</artifactId>
-    <packaging>war</packaging>
+    <artifactId>capa-bff-domain-hjson</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>group.rxcloud</groupId>
-            <artifactId>capa-bff-domain-graphql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>group.rxcloud</groupId>
-            <artifactId>capa-bff-domain-hjson</artifactId>
+            <artifactId>capa-bff-domain</artifactId>
         </dependency>
 
         <dependency>

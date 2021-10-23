@@ -13,7 +13,7 @@
         <module>capa-bff-api-http</module>
         <module>capa-bff-domain</module>
         <module>capa-bff-domain-graphql</module>
-        <module>capa-bff-domain-json</module>
+        <module>capa-bff-domain-hjson</module>
         <module>capa-bff-web</module>
     </modules>
 
@@ -23,9 +23,34 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 
-
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>group.rxcloud</groupId>
+                <artifactId>capa-bff-api-grpc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>group.rxcloud</groupId>
+                <artifactId>capa-bff-api-http</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>group.rxcloud</groupId>
+                <artifactId>capa-bff-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>group.rxcloud</groupId>
+                <artifactId>capa-bff-domain-graphql</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>group.rxcloud</groupId>
+                <artifactId>capa-bff-domain-hjson</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -43,12 +68,14 @@
                 <artifactId>spring-boot-starter-webflux</artifactId>
                 <version>${spring.boot.version}</version>
             </dependency>
+
             <!-- Capa's core SDK with all features. -->
             <dependency>
                 <groupId>group.rxcloud</groupId>
                 <artifactId>capa-sdk</artifactId>
                 <version>1.0.3.RELEASE</version>
             </dependency>
+
             <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
             <dependency>
                 <groupId>com.google.protobuf</groupId>
@@ -61,6 +88,13 @@
                 <artifactId>protobuf-java-format</artifactId>
                 <version>1.4</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.78</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
@@ -73,14 +107,8 @@
                 <version>3.4.10</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>1.2.78</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
-
 
     <build>
         <pluginManagement>
