@@ -2,6 +2,7 @@ package group.rxcloud.capa.bff.inbound;
 
 
 import group.rxcloud.capa.bff.domain.Context;
+import group.rxcloud.capa.bff.domain.InvocationRequest;
 
 import java.util.List;
 
