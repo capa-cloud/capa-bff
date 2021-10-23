@@ -27,6 +27,7 @@ public class CapaApiHttpController {
     private HJsonInvoker hJsonInvoker;
 
     @RequestMapping(value = "/vi/health")
+    @ResponseBody
     public String checkhealth(){
         return "ok";
     }
