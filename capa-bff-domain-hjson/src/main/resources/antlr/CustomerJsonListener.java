@@ -27,6 +27,16 @@ public interface CustomerJsonListener extends ParseTreeListener {
 	 */
 	void exitService(CustomerJsonParser.ServiceContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#serviceId}.
+	 * @param ctx the parse tree
+	 */
+	void enterServiceId(CustomerJsonParser.ServiceIdContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#serviceId}.
+	 * @param ctx the parse tree
+	 */
+	void exitServiceId(CustomerJsonParser.ServiceIdContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CustomerJsonParser#serviceBody}.
 	 * @param ctx the parse tree
 	 */
@@ -46,6 +56,16 @@ public interface CustomerJsonListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitRequestObj(CustomerJsonParser.RequestObjContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#requestId}.
+	 * @param ctx the parse tree
+	 */
+	void enterRequestId(CustomerJsonParser.RequestIdContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#requestId}.
+	 * @param ctx the parse tree
+	 */
+	void exitRequestId(CustomerJsonParser.RequestIdContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CustomerJsonParser#requestValue}.
 	 * @param ctx the parse tree
@@ -87,6 +107,16 @@ public interface CustomerJsonListener extends ParseTreeListener {
 	 */
 	void exitRequestBody(CustomerJsonParser.RequestBodyContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#requestBodyItem}.
+	 * @param ctx the parse tree
+	 */
+	void enterRequestBodyItem(CustomerJsonParser.RequestBodyItemContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#requestBodyItem}.
+	 * @param ctx the parse tree
+	 */
+	void exitRequestBodyItem(CustomerJsonParser.RequestBodyItemContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CustomerJsonParser#singleRequestField}.
 	 * @param ctx the parse tree
 	 */
@@ -96,6 +126,46 @@ public interface CustomerJsonListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSingleRequestField(CustomerJsonParser.SingleRequestFieldContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#requestJson}.
+	 * @param ctx the parse tree
+	 */
+	void enterRequestJson(CustomerJsonParser.RequestJsonContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#requestJson}.
+	 * @param ctx the parse tree
+	 */
+	void exitRequestJson(CustomerJsonParser.RequestJsonContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#obj}.
+	 * @param ctx the parse tree
+	 */
+	void enterObj(CustomerJsonParser.ObjContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#obj}.
+	 * @param ctx the parse tree
+	 */
+	void exitObj(CustomerJsonParser.ObjContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#pair}.
+	 * @param ctx the parse tree
+	 */
+	void enterPair(CustomerJsonParser.PairContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#pair}.
+	 * @param ctx the parse tree
+	 */
+	void exitPair(CustomerJsonParser.PairContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#arr}.
+	 * @param ctx the parse tree
+	 */
+	void enterArr(CustomerJsonParser.ArrContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#arr}.
+	 * @param ctx the parse tree
+	 */
+	void exitArr(CustomerJsonParser.ArrContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CustomerJsonParser#responseBody}.
 	 * @param ctx the parse tree

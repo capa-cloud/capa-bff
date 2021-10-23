@@ -3,6 +3,7 @@ package group.rxcloud.capa.bff.hjson.inbound.parse;
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.hjson.inbound.AntlrUtils;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
+import org.antlr.v4.runtime.RuleContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,20 +27,33 @@ public class BffParseListener extends CustomerJsonBaseListener {
     }
 
     @Override
-    public void enterRequestBody(CustomerJsonParser.RequestBodyContext ctx) {
-        String appId = AntlrUtils.parseRowString(ctx.getParent().getParent().getParent().getParent().getStart().getText());
-        String methodName = AntlrUtils.parseRowString(ctx.getParent().getParent().getStart().getText());
+    public void enterRequestJson(CustomerJsonParser.RequestJsonContext ctx) {
+        String appId = AntlrUtils.getServiceId(ctx);
+        String methodName = AntlrUtils.getRequestName(ctx);
         String requestKey = String.format("%s-%s", appId, methodName);
         String requestData = ctx.getText();
         HJsonInvocationRequest request = requestMap.get(requestKey);
         request.setData(JSONObject.parseObject(requestData));
-        super.enterRequestBody(ctx);
+        super.enterRequestJson(ctx);
+    }
+
+    @Override
+    public void enterServiceId(CustomerJsonParser.ServiceIdContext ctx) {
+        super.enterServiceId(ctx);
     }
 
     @Override
     public void enterSingleRequestFieldValue(CustomerJsonParser.SingleRequestFieldValueContext ctx) {
-        String appId = AntlrUtils.parseRowString(ctx.getParent().getParent().getParent().getParent().getParent().getParent().getStart().getText());
-        String methodName = AntlrUtils.parseRowString(ctx.getParent().getParent().getParent().getParent().getStart().getText());
+        RuleContext ruleContext = ctx.getParent();
+        while (!(ruleContext instanceof CustomerJsonParser.ServiceBodyContext)) {
+            ruleContext = ruleContext.getParent();
+        }
+        String appId = AntlrUtils.parseRowString(((CustomerJsonParser.ServiceBodyContext) ruleContext).getParent().getChild(0).getText());
+        ruleContext = ctx.getParent();
+        while (!(ruleContext instanceof CustomerJsonParser.RequestValueContext)) {
+            ruleContext = ruleContext.getParent();
+        }
+        String methodName = AntlrUtils.parseRowString(ruleContext.getParent().getChild(0).getText());
         String requestKey = String.format("%s-%s", appId, methodName);
         if (ctx.getStart().getType() == 15) {
             String requestFieldData = AntlrUtils.parseRowString(ctx.getText());

@@ -39,6 +39,18 @@ public class CustomerJsonBaseListener implements CustomerJsonListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterServiceId(CustomerJsonParser.ServiceIdContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitServiceId(CustomerJsonParser.ServiceIdContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterServiceBody(CustomerJsonParser.ServiceBodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -58,6 +70,18 @@ public class CustomerJsonBaseListener implements CustomerJsonListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitRequestObj(CustomerJsonParser.RequestObjContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRequestId(CustomerJsonParser.RequestIdContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRequestId(CustomerJsonParser.RequestIdContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -111,6 +135,18 @@ public class CustomerJsonBaseListener implements CustomerJsonListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterRequestBodyItem(CustomerJsonParser.RequestBodyItemContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRequestBodyItem(CustomerJsonParser.RequestBodyItemContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterSingleRequestField(CustomerJsonParser.SingleRequestFieldContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -118,6 +154,54 @@ public class CustomerJsonBaseListener implements CustomerJsonListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSingleRequestField(CustomerJsonParser.SingleRequestFieldContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRequestJson(CustomerJsonParser.RequestJsonContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRequestJson(CustomerJsonParser.RequestJsonContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterObj(CustomerJsonParser.ObjContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitObj(CustomerJsonParser.ObjContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPair(CustomerJsonParser.PairContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPair(CustomerJsonParser.PairContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArr(CustomerJsonParser.ArrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArr(CustomerJsonParser.ArrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

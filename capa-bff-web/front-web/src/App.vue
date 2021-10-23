@@ -60,10 +60,12 @@ export default {
     async requestHttp() {
       try {
         let data = (
-            await axios.get(`/api/capabff`)
+            await axios.post(`/api/capabff`, this.app.input, {
+              headers: { 'Content-Type' : 'text/plain' }
+            })
         );
-        this.app.output = JSON.stringify(data);
-        console.log(data);
+        this.app.output = JSON.stringify(data.data);
+        console.log(data.data);
       } catch (e) {
         this.$alert(e.message, "提示");
       } finally {

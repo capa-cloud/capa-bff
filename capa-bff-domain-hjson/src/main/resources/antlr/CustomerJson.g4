@@ -5,7 +5,11 @@ customerJson
     ;
 
 service
-    : STRING ':' serviceBody
+    : serviceId ':' serviceBody
+    ;
+
+serviceId
+    : STRING
     ;
 
 serviceBody
@@ -13,11 +17,15 @@ serviceBody
     ;
 
 requestObj
-    : STRING ':' requestValue
+    : requestId ':' requestValue
+    ;
+
+requestId
+    : STRING
     ;
 
 requestValue
-    : '(' 'request' ':' requestBody ',' ('requestHeader' ':' requestHeaderObj ',')? 'response' ':' responseBody ')'
+    : '(' 'request' ':' requestJson ',' ('requestHeader' ':' requestHeaderObj ',')? 'response' ':' responseBody ')'
     ;
 
 requestHeaderObj
@@ -30,13 +38,37 @@ singleRequestHeaderField
     ;
 
 requestBody
+    : '{' requestBodyItem (',' requestBodyItem)* '}'
+    | '{' '}'
+    ;
+
+requestBodyItem
     : '{' singleRequestField (',' singleRequestField)* '}'
+    | '{' requestBodyItem (',' requestBodyItem)* '}'
     | '{' '}'
     ;
 
 singleRequestField
     : STRING ':' singleRequestFieldValue
     ;
+
+requestJson
+   : singleRequestFieldValue
+   ;
+
+obj
+   : '{' pair (',' pair)* '}'
+   | '{' '}'
+   ;
+
+pair
+   : STRING ':' singleRequestFieldValue
+   ;
+
+arr
+   : '[' singleRequestFieldValue (',' singleRequestFieldValue)* ']'
+   | '[' ']'
+   ;
 
 responseBody
     : '{' singleResponseField (',' singleResponseField)* '}'
@@ -53,6 +85,8 @@ singleRequestFieldValue
    | 'true'
    | 'false'
    | 'null'
+   | obj
+   | arr
    ;
 
 singleResponseFieldValue
