@@ -2,8 +2,15 @@ package group.rxcloud.capa.bff.hjson.json;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.Objects;
+
 public class JsonValueMapper {
 
+    /**
+     * 根据PointPath{a.b.c}路径格式，从JSONObject中获取指定的路径项的值
+     *
+     * @return null when not found
+     */
     public static Object findValueByPointPath(JSONObject jsonObject, String valuePath) {
         if (jsonObject == null) {
             return null;
@@ -12,6 +19,7 @@ public class JsonValueMapper {
             return null;
         }
 
+        // 解析PointPath{a.b.c}路径格式
         String[] paths = valuePath.split("\\.");
         if (paths == null || paths.length == 0) {
             return null;
@@ -20,11 +28,14 @@ public class JsonValueMapper {
         Object object = null;
         JSONObject target = jsonObject;
         for (int i = 0; i < paths.length; i++) {
+            String path = paths[i];
+            // 前N-1次遍历：获取JSON嵌套对象
             if (i < paths.length - 1) {
-                String path = paths[i];
                 target = target.getJSONObject(path);
-            } else {
-                object = target.get(paths[paths.length - 1]);
+            }
+            // 第N次遍历：获取具体值
+            else {
+                object = target.get(path);
             }
         }
         return object;
@@ -46,5 +57,8 @@ public class JsonValueMapper {
 
         System.out.println(_int);
         System.out.println(_str);
+
+        assert Objects.equals(_int, 1);
+        assert Objects.equals(_str, "2");
     }
 }
