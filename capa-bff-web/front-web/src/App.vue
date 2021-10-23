@@ -2,9 +2,14 @@
 <template>
   <div class="box-shadow">
     <el-row>
+      <template v-for="(item,index) in app.resultList">
+        <el-button @click="showRequest(item.info)">{{item.name}}</el-button>
+      </template>
+    </el-row>
+    <el-row>
       <el-col :span="12">
         <div class="grid-content bg-purple">
-          <div class="input-box" style="display: block;width: 100%;position: relative">
+          <div class="input-box" style="display: block;width: 100%;height:640px;position: relative">
             <el-input
                 type="textarea"
                 :rows="30"
@@ -19,16 +24,9 @@
       <el-col :span="2" style="text-align: center">
         <el-button style="margin-top: 100px;" type="primary" size="medium" @click="requestHttp">请求</el-button>
       </el-col>
-      <el-col :span="10">
-        <div class="grid-content bg-purple-light">
-          <el-input
-              type="textarea"
-              :rows="30"
-              placeholder="响应结果"
-              :disabled="true"
-              v-model="app.output"
-              clearable>
-          </el-input>
+      <el-col :span="10" style="margin-top: -10px;">
+        <div class="box" style="height: 640px;background: #eee;padding:20px;">
+          <pre>{{app.output}}</pre>
         </div>
       </el-col>
     </el-row>
@@ -49,13 +47,133 @@ export default {
     return {
       app : {
         input : null,
-        output : null
+        output : '响应请求结果',
+        resultList : []
       }
     }
+  },
+  created() {
+    var simple = '{' + '\n'
+        + '        "20725.gscontentcenterservice":  [' + '\n'
+        + '                "getaccounttype":(' + '\n'
+        + '                    request:  {' + '\n'
+        + '                        "uid":  "wwwwww"' + '\n'
+        + '                },' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "ResponseStatus.Ack":  "user.forawegag"' + '\n'
+        + '                }' + '\n'
+        + '  )' + '\n'
+        + '        ]' + '\n'
+        + '}'; + '\n'
+    var simple2 = '{' + '\n'
+        + '        "20725.gscontentcenterservice":  [' + '\n'
+        + '                "getaccounttype":(' + '\n'
+        + '                    request:  {' + '\n'
+        + '                        "uid":  "wwwwww"' + '\n'
+        + '                },' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "accountTypeName":  "user.code"' + '\n'
+        + '                }' + '\n'
+        + '  )' + '\n'
+        + '        ],' + '\n'
+        + '        "21754.ibumarketingemailgatewayservice":  [' + '\n'
+        + '                "checkhealth":(' + '\n'
+        + '                    request:  {},' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "ResponseStatus.Ack":  "user.id"' + '\n'
+        + '                }' + '\n'
+        + '  )' + '\n'
+        + '        ]' + '\n'
+        + '}'; + '\n'
+    var simple3 = '{' + '\n'
+        + '        "20725.gscontentcenterservice":  [' + '\n'
+        + '                "getaccounttype":(' + '\n'
+        + '                    request:  {' + '\n'
+        + '                        "uid":  "${user.id}"' + '\n'
+        + '                },' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "ResponseStatus.Ack":  "user.code"' + '\n'
+        + '                }' + '\n'
+        + '  )' + '\n'
+        + '        ],' + '\n'
+        + '        "21754.ibumarketingemailgatewayservice":  [' + '\n'
+        + '                "checkhealth":(' + '\n'
+        + '                    request:  {},' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "ResponseStatus.Ack":  "user.id"' + '\n'
+        + '                }' + '\n'
+        + '  )' + '\n'
+        + '        ]' + '\n'
+        + '}'; + '\n'
+    var simple4 = '{' + '\n'
+        + '    "20725.gscontentcenterservice": [' + '\n'
+        + '        "getkolapplydetail":(' + '\n'
+        + '            request: {' + '\n'
+        + '                "kolApplyNo" : "1",' + '\n'
+        + '                "head" : {' + '\n'
+        + '                    "extension" : [{' + '\n'
+        + '                        "name" : "passKolPermission",' + '\n'
+        + '                        "value" : "true"' + '\n'
+        + '                    }]' + '\n'
+        + '                }' + '\n'
+        + '            },' + '\n'
+        + '            response: {' + '\n'
+        + '                "kolOrderDetail.demandType" : "kol.id",' + '\n'
+        + '                "kolOrderDetail.orderStatus" : "kol.statusName",' + '\n'
+        + '                "personalInformationDetail.placeOfDeparture" : "kol.placeOfDeparture",' + '\n'
+        + '                "personalInformationDetail.travelNumber" : "kol.travelNumber"' + '\n'
+        + '            }' + '\n'
+        + '        )' + '\n'
+        + '    ],' + '\n'
+        + '    "22812.tieyouflightjupiterservice":[' + '\n'
+        + '            "commonFlightPolicyDetailSearch":(' + '\n'
+        + '                 request: {' + '\n'
+        + '                        "context": {' + '\n'
+        + '                              "vendor":  "test",' + '\n'
+        + '                              "timestamp":   1634999443509,' + '\n'
+        + '                              "sign":"82c6271609524bb1f20f0ad9a530bb45",' + '\n'
+        + '                              "source":  "vendorPlatform"' + '\n'
+        + '                        },' + '\n'
+        + '                        "data":{' + '\n'
+        + '                              "startIndex":  1,' + '\n'
+        + '                              "pageSize":10,' + '\n'
+        + '                              "policyId":"",' + '\n'
+        + '                              "searchCondition": {' + '\n'
+        + '                                    "airline": "",' + '\n'
+        + '                                    "state":   ""' + '\n'
+        + '                              }' + '\n'
+        + '                        }' + '\n'
+        + '            },' + '\n'
+        + '            response:  {' + '\n'
+        + '                  "resultCode":  "user.code"' + '\n'
+        + '            }' + '\n'
+        + '        )' + '\n'
+        + '      ]' + '\n'
+        + '}' + '\n'
+    this.app.resultList.push({
+      name : '简单单个请求',
+      info : simple
+    });
+    this.app.resultList.push({
+      name : '简单多个请求',
+      info : simple2
+    });
+    this.app.resultList.push({
+      name : '相互依赖请求',
+      info : simple3
+    });
+    this.app.resultList.push({
+      name : '非常复杂请求',
+      info : simple4
+    });
+
   },
   methods : {
     jsonStr() {
       this.app.input = JSON.parse(this.app.input);
+    },
+    showRequest(info) {
+      this.app.input = info;
     },
     async requestHttp() {
       try {
@@ -64,8 +182,7 @@ export default {
               headers: { 'Content-Type' : 'text/plain' }
             })
         );
-        this.app.output = JSON.stringify(data.data);
-        console.log(data.data);
+        this.app.output = JSON.stringify(data.data, 0, "\t");
       } catch (e) {
         this.$alert(e.message, "提示");
       } finally {
