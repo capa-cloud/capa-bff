@@ -21,7 +21,10 @@
             <groupId>group.rxcloud</groupId>
             <artifactId>capa-bff-domain-hjson</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>group.rxcloud</groupId>
+            <artifactId>capa-bff-domain</artifactId>
+        </dependency>
         <dependency>
             <groupId>group.rxcloud</groupId>
             <artifactId>capa-bff-domain</artifactId>

@@ -97,6 +97,26 @@ public interface CustomerJsonListener extends ParseTreeListener {
 	 */
 	void exitSingleResponseField(CustomerJsonParser.SingleResponseFieldContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#singleRequestFieldValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterSingleRequestFieldValue(CustomerJsonParser.SingleRequestFieldValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#singleRequestFieldValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitSingleRequestFieldValue(CustomerJsonParser.SingleRequestFieldValueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#singleResponseFieldValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterSingleResponseFieldValue(CustomerJsonParser.SingleResponseFieldValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#singleResponseFieldValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitSingleResponseFieldValue(CustomerJsonParser.SingleResponseFieldValueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CustomerJsonParser#value}.
 	 * @param ctx the parse tree
 	 */
