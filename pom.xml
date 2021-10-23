@@ -79,11 +79,6 @@
                 <artifactId>capa-sdk</artifactId>
                 <version>1.0.3.RELEASE</version>
             </dependency>
-            <dependency>
-                <groupId>com.ctrip.ibu</groupId>
-                <artifactId>capa-spi-ctrip</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
-            </dependency>
 
             <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
             <dependency>
