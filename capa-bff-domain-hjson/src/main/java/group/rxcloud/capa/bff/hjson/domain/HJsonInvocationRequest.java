@@ -3,7 +3,7 @@ package group.rxcloud.capa.bff.hjson.domain;
 
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.domain.InvocationRequest;
-import group.rxcloud.capa.bff.hjson.allocate.ServiceAllocate;
+import group.rxcloud.capa.bff.hjson.allocate.HJsonInvoker;
 import lombok.ToString;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @ToString
 public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
-        implements ServiceAllocate.TaskService {
+        implements HJsonInvoker.TaskService {
     public static  final String SEPARATOR = ".";
 
     /**

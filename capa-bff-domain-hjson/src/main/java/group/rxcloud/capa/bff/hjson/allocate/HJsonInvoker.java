@@ -25,8 +25,7 @@ import java.util.concurrent.*;
  * Date: 2021/10/22 13:56
  */
 @Component
-@Scope("request")
-public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJsonInvocationResponse> {
+public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonInvocationResponse> {
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
 
@@ -80,7 +79,7 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
         Object block = m.block();
         System.out.println("finish");
     }
-    public ServiceAllocate() {
+    public HJsonInvoker() {
         localDynamicParamsMapping = new ThreadLocal<>();
 
         serviceDynamicRequestParamCount = new ThreadLocal<>();
