@@ -110,8 +110,7 @@
                 <artifactId>reactor-test</artifactId>
                 <version>3.4.10</version>
                 <scope>test</scope>
-            </dependency>
-
+          </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4</artifactId>
