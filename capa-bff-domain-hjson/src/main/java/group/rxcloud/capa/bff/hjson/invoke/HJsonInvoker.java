@@ -97,7 +97,9 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                                  ConcurrentHashMap<String, Object> parasmKeyValueMapping,
                                  CopyOnWriteArrayList<HJsonInvocationResponse> reList,
                                  CountDownLatch cd){
-
+        if (taskService.getData()==null){
+            taskService.setData(new JSONObject());
+        }
         Map<String, Object> requiredParams = taskService.getRequiredParams();
         if(requiredParams!=null){
 
