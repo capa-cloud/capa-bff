@@ -222,6 +222,8 @@ public class HJsonOutbound implements Outbound<
     }
 
     public static void main(String[] args) {
+        HJsonOutbound hJsonOutbound = new HJsonOutbound();
+
         HashMap<String, Object> aliasValueMap = new HashMap<>();
         aliasValueMap.put("user.id", 1);
         aliasValueMap.put("user.name", "1234");
@@ -230,8 +232,66 @@ public class HJsonOutbound implements Outbound<
         aliasValueMap.put("city.address.id", "2");
         aliasValueMap.put("city.address.name", "shanghai");
 
-        HJsonOutbound hJsonOutbound = new HJsonOutbound();
+        // -- generateJsonObjectFromPathMap
+
         JSONObject jsonObject = hJsonOutbound.generateJsonObjectFromPathMap(aliasValueMap);
         System.out.println(jsonObject);
+
+        // -- outbound
+
+        JSONObject request = new JSONObject();
+        request.put("a", "1");
+        HashMap<String, String> responseDataFormat = new HashMap<>();
+        responseDataFormat.put("b.c.id", "user.id");
+        responseDataFormat.put("b.c.name", "user.name");
+        responseDataFormat.put("b.c.city.id", "user.address.city.id");
+        responseDataFormat.put("b.c.city.name", "user.address.city.name");
+        responseDataFormat.put("b.c.address.id", "city.address.id");
+        responseDataFormat.put("b.c.address.name", "city.address.name");
+
+        HJsonInvocationRequest hJsonInvocationRequest = new HJsonInvocationRequest();
+        hJsonInvocationRequest.setAppId("12345");
+        hJsonInvocationRequest.setMethod("hello");
+        hJsonInvocationRequest.setData(request);
+        hJsonInvocationRequest.setResponseDataFormat(responseDataFormat);
+
+        JSONObject address = new JSONObject();
+        address.put("id", 123);
+        address.put("name", "234");
+
+        JSONObject city = new JSONObject();
+        city.put("id", 12);
+        city.put("name", "23");
+
+        JSONObject c = new JSONObject();
+        c.put("id", 1);
+        c.put("name", "2");
+        c.put("city", city);
+        c.put("address", address);
+
+        JSONObject b = new JSONObject();
+        b.put("c", c);
+
+        JSONObject a = new JSONObject();
+        a.put("b", b);
+
+        HJsonInvocationResponse hJsonInvocationResponse = new HJsonInvocationResponse();
+        hJsonInvocationResponse.setAppId("12345");
+        hJsonInvocationResponse.setMethod("hello");
+        hJsonInvocationResponse.setData(a);
+
+        HJsonInvocationRequest failure = new HJsonInvocationRequest();
+        failure.setAppId("23456");
+        failure.setMethod("failure");
+        failure.setData(request);
+        failure.setResponseDataFormat(responseDataFormat);
+
+        JSONObject outbound = hJsonOutbound.outbound(
+                List.of(hJsonInvocationRequest, failure),
+                List.of(hJsonInvocationResponse),
+                new Context() {
+                });
+
+        System.out.println(outbound);
     }
 }
