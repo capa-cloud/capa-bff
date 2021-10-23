@@ -14,6 +14,16 @@ import java.util.Map;
 public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
         implements ServiceAllocate.TaskService {
 
+    /**
+     * 需要补充的动态参数列表
+     */
+    private Map<String, Object> requiredParams;
+
+    /**
+     * Response数据裁剪的格式映射KV
+     */
+    private Map<String, String> responseDataFormat;
+
     @Override
     public Map<String, String> params() {
         return null;
@@ -27,5 +37,21 @@ public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
     @Override
     public boolean sync() {
         return false;
+    }
+
+    public Map<String, Object> getRequiredParams() {
+        return requiredParams;
+    }
+
+    public void setRequiredParams(Map<String, Object> requiredParams) {
+        this.requiredParams = requiredParams;
+    }
+
+    public Map<String, String> getResponseDataFormat() {
+        return responseDataFormat;
+    }
+
+    public void setResponseDataFormat(Map<String, String> responseDataFormat) {
+        this.responseDataFormat = responseDataFormat;
     }
 }
