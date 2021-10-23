@@ -2,6 +2,7 @@ package group.rxcloud.capa.bff.configuration;
 
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.rpc.CapaRpcClient;
+import group.rxcloud.capa.rpc.CapaRpcClientBuilder;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
 import group.rxcloud.cloudruntimes.domain.core.invocation.InvokeMethodRequest;
 import group.rxcloud.cloudruntimes.utils.TypeRef;
