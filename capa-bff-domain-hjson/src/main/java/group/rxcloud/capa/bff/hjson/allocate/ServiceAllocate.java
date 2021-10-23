@@ -1,5 +1,7 @@
 package group.rxcloud.capa.bff.hjson.allocate;
 
+import com.alibaba.fastjson.JSONObject;
+import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
 import group.rxcloud.capa.bff.invoke.Invoke;
@@ -40,7 +42,7 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
     private final ThreadLocal<CountDownLatch> cyclicBarrierThreadLocal;
 
     @Override
-    public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList) {
+    public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) {
         clearThreadLocal();
         CountDownLatch cy = new CountDownLatch(invocationList.size());
         cyclicBarrierThreadLocal.set(cy);
@@ -48,7 +50,7 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
             allocateService(request);
         }
         try {
-            cy.await();
+            boolean await = cy.await(500, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -66,9 +68,6 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
     }
 
     public interface TaskService {
-
-
-        Map<String, String> params();
 
         void replaceParam(String key, String value);
 
@@ -114,12 +113,10 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
         ConcurrentHashMap<String, String> parasmKeyValueMapping = paramsSet.get();
         CopyOnWriteArrayList<HJsonInvocationResponse> reList = responseList.get();
 
-        Map<String, String> params = taskService.params();
-        if (CollectionUtils.isEmpty(params)) {
-            return null;
-        }
+        Map<String, String> requiredParams = taskService.getRequiredParams();
+
         boolean flag = false;
-        Set<Map.Entry<String, String>> entries = params.entrySet();
+        Set<Map.Entry<String, String>> entries = requiredParams.entrySet();
         for (Map.Entry<String, String> param : entries) {
             //^#{[.]+}$
             if (param != null && !StringUtils.isEmpty(param.getValue()) && param.getValue().matches("^#\\{.+}$")) {
@@ -149,21 +146,30 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
         }
         // 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
         CountDownLatch cd = cyclicBarrierThreadLocal.get();
-        Mono<HashMap> responseMono = capaRpcClient.invokeMethod(
+        Mono<JSONObject> responseMono = capaRpcClient.invokeMethod(
                 taskService.getAppId(),
                 taskService.getMethod(),
                 taskService.getData(),
                 HttpExtension.POST,
-                taskService.getMetaData(),
-                TypeRef.get(HashMap.class));
+                taskService.getMetadata(),
+                TypeRef.get(JSONObject.class));
         if (taskService.sync()) {
-            cd.countDown();
-            HashMap block = responseMono.block();
+
+            JSONObject block = responseMono.block();
             reList.add(new HJsonInvocationResponse(taskService, block));
+            Map<String, String> responseDataFormat = taskService.getResponseDataFormat();
+            if (responseDataFormat!=null && !responseDataFormat.isEmpty()){
+                Set<String> strings = responseDataFormat.keySet();
+                for (String path:strings){
+                    // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
+                }
+            }
+            cd.countDown();
         } else {
             responseMono.doOnSuccess((s) -> {
-                cd.countDown();
+
                 reList.add(new HJsonInvocationResponse(taskService, s));
+                cd.countDown();
             });
 
         }
