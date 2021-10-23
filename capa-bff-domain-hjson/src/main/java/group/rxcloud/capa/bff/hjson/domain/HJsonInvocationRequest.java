@@ -20,15 +20,22 @@ public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
     /**
      * 需要补充的动态参数列表
      */
-    private Map<String, String> requiredParams;
+    private Map<String, Object> requiredParams;
 
     /**
      * Response数据裁剪的格式映射KV
      */
     private Map<String, String> responseDataFormat;
 
+    public Map<String, Object> getRequiredParams() {
+        return requiredParams;
+    }
 
-    public void replaceParam(String key, String value) {
+    public void setRequiredParams(Map<String, Object> requiredParams) {
+        this.requiredParams = requiredParams;
+    }
+
+    public void replaceParam(String key, Object value) {
 
     }
 
@@ -36,13 +43,6 @@ public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
         return false;
     }
 
-    public Map<String, String> getRequiredParams() {
-        return requiredParams;
-    }
-
-    public void setRequiredParams(Map<String, String> requiredParams) {
-        this.requiredParams = requiredParams;
-    }
 
     public Map<String, String> getResponseDataFormat() {
         return responseDataFormat;
