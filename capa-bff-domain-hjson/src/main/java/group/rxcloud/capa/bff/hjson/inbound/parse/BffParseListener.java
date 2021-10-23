@@ -1,12 +1,13 @@
 package group.rxcloud.capa.bff.hjson.inbound.parse;
 
-import group.rxcloud.capa.bff.hjson.AntlrUtils;
-import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import com.alibaba.fastjson.JSONObject;
+import group.rxcloud.capa.bff.hjson.inbound.AntlrUtils;
+import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-public class BffParseListener extends CustomerJsonBaseListener{
+public class BffParseListener extends CustomerJsonBaseListener {
 
     public Map<String, HJsonInvocationRequest> requestMap = new HashMap<>();
 
@@ -44,7 +45,7 @@ public class BffParseListener extends CustomerJsonBaseListener{
             String requestFieldData = AntlrUtils.parseRowString(ctx.getText());
             if (requestFieldData.contains("${")) {
                 HJsonInvocationRequest request = requestMap.get(requestKey);
-                request.getRequiredParams().put(requestFieldData.substring(2, requestFieldData.length()-1), null);
+                request.getRequiredParams().put(requestFieldData.substring(2, requestFieldData.length() - 1), null);
             }
         }
         super.enterSingleRequestFieldValue(ctx);
@@ -65,5 +66,4 @@ public class BffParseListener extends CustomerJsonBaseListener{
 
         super.enterSingleResponseFieldValue(ctx);
     }
-
 }
