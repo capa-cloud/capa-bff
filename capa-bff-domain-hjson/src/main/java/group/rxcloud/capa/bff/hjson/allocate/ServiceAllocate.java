@@ -120,35 +120,37 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
                                  CountDownLatch cd){
 
         Map<String, Object> requiredParams = taskService.getRequiredParams();
+        if(requiredParams!=null){
 
-        boolean flag = false;
-        Set<Map.Entry<String, Object>> entries = requiredParams.entrySet();
-        for (Map.Entry<String, Object> param : entries) {
-            //^#{[.]+}$
-            if (param != null && !StringUtils.isEmpty(param.getKey()) ) {
-                if (parasmKeyValueMapping.containsKey(param.getKey())) {
-                    taskService.replaceParam(param.getKey(), parasmKeyValueMapping.get(param.getKey()));
-                    continue;
-                }
-                flag = true;
-                ConcurrentHashMap<String, List<HJsonInvocationRequest>> stringListHashMap = localParamsServiceMapping;
-                if (stringListHashMap.get(param.getKey()) == null) {
-                    List<HJsonInvocationRequest> list = new ArrayList<>();
-                    list.add(taskService);
-                    Integer count = serviceParamCountMapping.get(taskService);
-                    serviceParamCountMapping.put(taskService, count == null ? 1 : count + 1);
-                    stringListHashMap.put(param.getKey(), list);
-                } else if (!stringListHashMap.get(param.getKey()).contains(taskService)) {
-                    Integer count = serviceParamCountMapping.get(taskService);
-                    serviceParamCountMapping.put(taskService, count == null ? 1 : count + 1);
-                    stringListHashMap.get(param.getKey()).add(taskService);
-                }
+            boolean flag = false;
+            Set<Map.Entry<String, Object>> entries = requiredParams.entrySet();
+            for (Map.Entry<String, Object> param : entries) {
+                //^#{[.]+}$
+                if (param != null && !StringUtils.isEmpty(param.getKey()) ) {
+                    if (parasmKeyValueMapping.containsKey(param.getKey())) {
+                        taskService.replaceParam(param.getKey(), parasmKeyValueMapping.get(param.getKey()));
+                        continue;
+                    }
+                    flag = true;
+                    ConcurrentHashMap<String, List<HJsonInvocationRequest>> stringListHashMap = localParamsServiceMapping;
+                    if (stringListHashMap.get(param.getKey()) == null) {
+                        List<HJsonInvocationRequest> list = new ArrayList<>();
+                        list.add(taskService);
+                        Integer count = serviceParamCountMapping.get(taskService);
+                        serviceParamCountMapping.put(taskService, count == null ? 1 : count + 1);
+                        stringListHashMap.put(param.getKey(), list);
+                    } else if (!stringListHashMap.get(param.getKey()).contains(taskService)) {
+                        Integer count = serviceParamCountMapping.get(taskService);
+                        serviceParamCountMapping.put(taskService, count == null ? 1 : count + 1);
+                        stringListHashMap.get(param.getKey()).add(taskService);
+                    }
 
+                }
+                ;
             }
-            ;
-        }
-        if (flag) {
-            return null;
+            if (flag) {
+                return null;
+            }
         }
         // 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
 //        CountDownLatch cd = cyclicBarrierThreadLocal.get();
