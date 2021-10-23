@@ -14,6 +14,20 @@ public class JsonValueMapper {
      */
     private static final String TOKEN = "\\$\\{%s\\}";
 
+    public static String[] findValueByPointPath(String valuePath) {
+        if (valuePath == null || valuePath.length() == 0) {
+            return null;
+        }
+
+        // 解析PointPath{a.b.c}路径格式
+        String[] paths = valuePath.split("\\.");
+        if (paths == null || paths.length == 0) {
+            return null;
+        }
+
+        return paths;
+    }
+
     /**
      * 使用Parameters{@code <别名，值>}中的值，替换JSONObject中的占位符
      */
