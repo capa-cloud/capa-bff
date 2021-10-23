@@ -1,7 +1,6 @@
-package group.rxcloud.capa.bff.hjson.allocate;
+package group.rxcloud.capa.bff.hjson.invoke;
 
 import com.alibaba.fastjson.JSONObject;
-import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
@@ -11,7 +10,6 @@ import group.rxcloud.capa.rpc.CapaRpcClient;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
 import group.rxcloud.cloudruntimes.utils.TypeRef;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -25,8 +23,7 @@ import java.util.concurrent.*;
  * Date: 2021/10/22 13:56
  */
 @Component
-@Scope("request")
-public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJsonInvocationResponse> {
+public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonInvocationResponse> {
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
 
@@ -80,7 +77,7 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
         Object block = m.block();
         System.out.println("finish");
     }
-    public ServiceAllocate() {
+    public HJsonInvoker() {
         localDynamicParamsMapping = new ThreadLocal<>();
 
         serviceDynamicRequestParamCount = new ThreadLocal<>();
@@ -120,35 +117,37 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
                                  CountDownLatch cd){
 
         Map<String, Object> requiredParams = taskService.getRequiredParams();
+        if(requiredParams!=null){
 
-        boolean flag = false;
-        Set<Map.Entry<String, Object>> entries = requiredParams.entrySet();
-        for (Map.Entry<String, Object> param : entries) {
-            //^#{[.]+}$
-            if (param != null && !StringUtils.isEmpty(param.getKey()) ) {
-                if (parasmKeyValueMapping.containsKey(param.getKey())) {
-                    taskService.replaceParam(param.getKey(), parasmKeyValueMapping.get(param.getKey()));
-                    continue;
-                }
-                flag = true;
-                ConcurrentHashMap<String, List<HJsonInvocationRequest>> stringListHashMap = localParamsServiceMapping;
-                if (stringListHashMap.get(param.getKey()) == null) {
-                    List<HJsonInvocationRequest> list = new ArrayList<>();
-                    list.add(taskService);
-                    Integer count = serviceParamCountMapping.get(taskService);
-                    serviceParamCountMapping.put(taskService, count == null ? 1 : count + 1);
-                    stringListHashMap.put(param.getKey(), list);
-                } else if (!stringListHashMap.get(param.getKey()).contains(taskService)) {
-                    Integer count = serviceParamCountMapping.get(taskService);
-                    serviceParamCountMapping.put(taskService, count == null ? 1 : count + 1);
-                    stringListHashMap.get(param.getKey()).add(taskService);
-                }
+            boolean flag = false;
+            Set<Map.Entry<String, Object>> entries = requiredParams.entrySet();
+            for (Map.Entry<String, Object> param : entries) {
+                //^#{[.]+}$
+                if (param != null && !StringUtils.isEmpty(param.getKey()) ) {
+                    if (parasmKeyValueMapping.containsKey(param.getKey())) {
+                        taskService.replaceParam(param.getKey(), parasmKeyValueMapping.get(param.getKey()));
+                        continue;
+                    }
+                    flag = true;
+                    ConcurrentHashMap<String, List<HJsonInvocationRequest>> stringListHashMap = localParamsServiceMapping;
+                    if (stringListHashMap.get(param.getKey()) == null) {
+                        List<HJsonInvocationRequest> list = new ArrayList<>();
+                        list.add(taskService);
+                        Integer count = serviceParamCountMapping.get(taskService);
+                        serviceParamCountMapping.put(taskService, count == null ? 1 : count + 1);
+                        stringListHashMap.put(param.getKey(), list);
+                    } else if (!stringListHashMap.get(param.getKey()).contains(taskService)) {
+                        Integer count = serviceParamCountMapping.get(taskService);
+                        serviceParamCountMapping.put(taskService, count == null ? 1 : count + 1);
+                        stringListHashMap.get(param.getKey()).add(taskService);
+                    }
 
+                }
+                ;
             }
-            ;
-        }
-        if (flag) {
-            return null;
+            if (flag) {
+                return null;
+            }
         }
         // 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
 //        CountDownLatch cd = cyclicBarrierThreadLocal.get();

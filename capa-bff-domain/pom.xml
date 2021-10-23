@@ -22,8 +22,8 @@
         </dependency>
 
         <dependency>
-            <groupId>group.rxcloud</groupId>
-            <artifactId>capa-sdk</artifactId>
+            <groupId>com.ctrip.ibu</groupId>
+            <artifactId>capa-spi-ctrip</artifactId>
         </dependency>
 
         <dependency>
