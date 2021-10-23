@@ -6,6 +6,7 @@ import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
 import group.rxcloud.capa.bff.hjson.json.JsonValueMapper;
+import group.rxcloud.capa.bff.hjson.util.InnerMethodUtil;
 import group.rxcloud.capa.bff.invoke.Invoke;
 import group.rxcloud.capa.rpc.CapaRpcClient;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
@@ -161,9 +162,22 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
             if (responseDataFormat!=null && !responseDataFormat.isEmpty()){
                 Set<String> strings = responseDataFormat.keySet();
                 for (String path:strings){
-                    String nickName = responseDataFormat.get(path);
-                    // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
+                    String pathMappingName = responseDataFormat.get(path);
+                    String nickName = "";
+                    boolean method = false;
                     Object obj = JsonValueMapper.findValueByPointPath(response, path);
+
+                    if (pathMappingName.contains("#{")){
+                        nickName = pathMappingName.substring(pathMappingName.lastIndexOf("}")+1);
+                        obj = InnerMethodUtil.runMethodAsStringBeforeConvert(pathMappingName,obj);
+                    }else {
+                        nickName = pathMappingName;
+                    }
+                    if (StringUtils.isEmpty(nickName)){
+                        System.out.println(JSONObject.toJSONString(taskService)+"resp 中 " +path +"没有别名");
+                        continue;
+                    }
+                    // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
                     nickName = nickName==null?"":nickName;
                     obj = obj==null?new JSONObject():obj;
                     parasmKeyValueMapping.put(nickName,obj);
