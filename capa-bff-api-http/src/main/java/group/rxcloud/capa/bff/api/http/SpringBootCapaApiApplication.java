@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication(
         scanBasePackages = {"group.rxcloud.capa.bff"}
 )
-public class SpringBootBFFApplication {
+public class SpringBootCapaApiApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringBootCapaApiApplication.class, args);

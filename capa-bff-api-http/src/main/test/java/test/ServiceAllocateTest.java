@@ -1,6 +1,6 @@
 package test;
 
-import group.rxcloud.capa.bff.api.http.SpringBootBFFApplication;
+import group.rxcloud.capa.bff.api.http.SpringBootCapaApiApplication;
 import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.allocate.ServiceAllocate;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
@@ -19,7 +19,7 @@ import java.util.Collections;
  * Author: KJ.ZHAO
  * Date: 2021/10/23 16:21
  */
-@SpringBootTest(classes = SpringBootBFFApplication.class)
+@SpringBootTest(classes = SpringBootCapaApiApplication.class)
 public class ServiceAllocateTest {
 
     @Autowired
