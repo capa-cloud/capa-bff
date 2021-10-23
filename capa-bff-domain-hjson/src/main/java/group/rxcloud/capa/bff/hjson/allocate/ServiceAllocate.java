@@ -1,5 +1,6 @@
 package group.rxcloud.capa.bff.hjson.allocate;
 
+import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
 import group.rxcloud.capa.bff.invoke.Invoke;
@@ -39,8 +40,7 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
 
     private final ThreadLocal<CountDownLatch> cyclicBarrierThreadLocal;
 
-    @Override
-    public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList) {
+    public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) {
         clearThreadLocal();
         CountDownLatch cy = new CountDownLatch(invocationList.size());
         cyclicBarrierThreadLocal.set(cy);
@@ -154,16 +154,18 @@ public final class ServiceAllocate implements Invoke<HJsonInvocationRequest, HJs
                 taskService.getMethod(),
                 taskService.getData(),
                 HttpExtension.POST,
-                taskService.getMetaData(),
+//                taskService.getMetaData(),
                 TypeRef.get(HashMap.class));
         if (taskService.sync()) {
             cd.countDown();
             HashMap block = responseMono.block();
-            reList.add(new HJsonInvocationResponse(taskService, block));
+            // todo
+//            reList.add(new HJsonInvocationResponse(taskService, block));
         } else {
             responseMono.doOnSuccess((s) -> {
                 cd.countDown();
-                reList.add(new HJsonInvocationResponse(taskService, s));
+                // todo
+//                reList.add(new HJsonInvocationResponse(taskService, s));
             });
 
         }

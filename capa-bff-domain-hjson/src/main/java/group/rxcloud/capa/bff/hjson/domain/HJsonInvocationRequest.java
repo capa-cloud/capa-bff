@@ -24,17 +24,14 @@ public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
      */
     private Map<String, String> responseDataFormat;
 
-    @Override
     public Map<String, String> params() {
         return null;
     }
 
-    @Override
     public void replaceParam(String key, String value) {
 
     }
 
-    @Override
     public boolean sync() {
         return false;
     }
