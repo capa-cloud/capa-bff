@@ -17,7 +17,7 @@ public class InnerMethodUtil {
     public static void main(String[] args) {
         JSONObject json = new JSONObject();
         json.put("name","lsadkjaskd");
-        String base64 = runMethodAsStringBeforeConvert("#{Base64}", json);
+        String base64 = runMethodAsStringBeforeConvert("#{Base64} user.code", json);
         System.out.println(base64);
         System.out.println(new String(Base64.getDecoder().decode(base64)));
     }
