@@ -23,7 +23,7 @@ import java.util.*;
 public class ServiceAllocateTest {
 
     @Autowired
-    private ServiceAllocate serviceAllocate;
+    private HJsonInvoker serviceAllocate;
 
     @Test
     public void test(){
@@ -42,8 +42,7 @@ public class ServiceAllocateTest {
 
         List<HJsonInvocationRequest> list = Collections.singletonList(re);
 
-        List<HJsonInvocationResponse> invoke = serviceAllocate.invoke(list, new Context() {
-        });
+        List<HJsonInvocationResponse> invoke = serviceAllocate.invoke(list, null);
 //        System.out.println(invoke);
 
         if (!CollectionUtils.isEmpty(invoke)){
