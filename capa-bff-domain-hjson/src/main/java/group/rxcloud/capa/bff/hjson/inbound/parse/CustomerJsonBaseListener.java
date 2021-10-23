@@ -75,6 +75,30 @@ public class CustomerJsonBaseListener implements CustomerJsonListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterRequestHeaderObj(CustomerJsonParser.RequestHeaderObjContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRequestHeaderObj(CustomerJsonParser.RequestHeaderObjContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSingleRequestHeaderField(CustomerJsonParser.SingleRequestHeaderFieldContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSingleRequestHeaderField(CustomerJsonParser.SingleRequestHeaderFieldContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterRequestBody(CustomerJsonParser.RequestBodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -142,6 +166,18 @@ public class CustomerJsonBaseListener implements CustomerJsonListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSingleResponseFieldValue(CustomerJsonParser.SingleResponseFieldValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSinglerequestHeaderFieldValue(CustomerJsonParser.SinglerequestHeaderFieldValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSinglerequestHeaderFieldValue(CustomerJsonParser.SinglerequestHeaderFieldValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

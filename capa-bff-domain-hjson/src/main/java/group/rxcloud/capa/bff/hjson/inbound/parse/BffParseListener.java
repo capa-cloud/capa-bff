@@ -41,7 +41,7 @@ public class BffParseListener extends CustomerJsonBaseListener {
         String appId = AntlrUtils.parseRowString(ctx.getParent().getParent().getParent().getParent().getParent().getParent().getStart().getText());
         String methodName = AntlrUtils.parseRowString(ctx.getParent().getParent().getParent().getParent().getStart().getText());
         String requestKey = String.format("%s-%s", appId, methodName);
-        if (ctx.getStart().getType() == 12) {
+        if (ctx.getStart().getType() == 15) {
             String requestFieldData = AntlrUtils.parseRowString(ctx.getText());
             if (requestFieldData.contains("${")) {
                 HJsonInvocationRequest request = requestMap.get(requestKey);
@@ -58,12 +58,27 @@ public class BffParseListener extends CustomerJsonBaseListener {
         String requestKey = String.format("%s-%s", appId, methodName);
         String responseFieldKey = AntlrUtils.parseRowString(ctx.getParent().getStart().getText());
         String responseFieldValue = ctx.getText();
-        if (ctx.getStart().getType() == 12) {
+        if (ctx.getStart().getType() == 15) {
             responseFieldValue = AntlrUtils.parseRowString(responseFieldValue);
         }
         HJsonInvocationRequest request = requestMap.get(requestKey);
         request.getResponseDataFormat().put(responseFieldKey, responseFieldValue);
 
         super.enterSingleResponseFieldValue(ctx);
+    }
+
+    @Override
+    public void enterSinglerequestHeaderFieldValue(CustomerJsonParser.SinglerequestHeaderFieldValueContext ctx) {
+        String appId = AntlrUtils.parseRowString(ctx.getParent().getParent().getParent().getParent().getParent().getParent().getStart().getText());
+        String methodName = AntlrUtils.parseRowString(ctx.getParent().getParent().getParent().getParent().getStart().getText());
+        String requestKey = String.format("%s-%s", appId, methodName);
+        HJsonInvocationRequest request = requestMap.get(requestKey);
+        String requestHeaderKey = AntlrUtils.parseRowString(ctx.getParent().getStart().getText());
+        String requestHeaderValue = ctx.getStart().getText();
+        if (ctx.getStart().getType() == 15) {
+            request.getMetadata().put(requestHeaderKey, AntlrUtils.parseRowString(requestHeaderValue));
+        }
+
+        super.enterSinglerequestHeaderFieldValue(ctx);
     }
 }

@@ -57,6 +57,26 @@ public interface CustomerJsonListener extends ParseTreeListener {
 	 */
 	void exitRequestValue(CustomerJsonParser.RequestValueContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#requestHeaderObj}.
+	 * @param ctx the parse tree
+	 */
+	void enterRequestHeaderObj(CustomerJsonParser.RequestHeaderObjContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#requestHeaderObj}.
+	 * @param ctx the parse tree
+	 */
+	void exitRequestHeaderObj(CustomerJsonParser.RequestHeaderObjContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#singleRequestHeaderField}.
+	 * @param ctx the parse tree
+	 */
+	void enterSingleRequestHeaderField(CustomerJsonParser.SingleRequestHeaderFieldContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#singleRequestHeaderField}.
+	 * @param ctx the parse tree
+	 */
+	void exitSingleRequestHeaderField(CustomerJsonParser.SingleRequestHeaderFieldContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CustomerJsonParser#requestBody}.
 	 * @param ctx the parse tree
 	 */
@@ -116,6 +136,16 @@ public interface CustomerJsonListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSingleResponseFieldValue(CustomerJsonParser.SingleResponseFieldValueContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CustomerJsonParser#singlerequestHeaderFieldValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterSinglerequestHeaderFieldValue(CustomerJsonParser.SinglerequestHeaderFieldValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CustomerJsonParser#singlerequestHeaderFieldValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitSinglerequestHeaderFieldValue(CustomerJsonParser.SinglerequestHeaderFieldValueContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CustomerJsonParser#value}.
 	 * @param ctx the parse tree

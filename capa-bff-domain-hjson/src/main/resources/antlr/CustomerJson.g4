@@ -17,11 +17,21 @@ requestObj
     ;
 
 requestValue
-    : '(' STRING ':' requestBody ',' STRING ':' responseBody ')'
+    : '(' 'request' ':' requestBody ',' ('requestHeader' ':' requestHeaderObj ',')? 'response' ':' responseBody ')'
+    ;
+
+requestHeaderObj
+    : '{' singleRequestHeaderField (',' singleRequestHeaderField)* '}'
+    | '{' '}'
+    ;
+
+singleRequestHeaderField
+    : STRING ':' singlerequestHeaderFieldValue
     ;
 
 requestBody
     : '{' singleRequestField (',' singleRequestField)* '}'
+    | '{' '}'
     ;
 
 singleRequestField
@@ -30,6 +40,7 @@ singleRequestField
 
 responseBody
     : '{' singleResponseField (',' singleResponseField)* '}'
+    | '{' '}'
     ;
 
 singleResponseField
@@ -52,6 +63,13 @@ singleResponseFieldValue
    | 'null'
    ;
 
+singlerequestHeaderFieldValue
+   : STRING
+   | NUMBER
+   | 'true'
+   | 'false'
+   | 'null'
+   ;
 
 value
    : STRING
