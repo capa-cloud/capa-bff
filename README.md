@@ -1,9 +1,9 @@
 `capa-bff`仅提供一个接口，并接收一个大`json`格式的请求体数据。内部会对请求体数据进行解析，并根据解析结果决定接口调用顺序，再根据需要对接口返回值进行裁剪。
 接口请求体数据格式整体示例如下：
-```json5
+```
 {
-  "10011111": {
-    "getUserInfo":{
+  "10011111": [
+    "getUserInfo":(
       "request": {
           "id": 1
        },
@@ -12,16 +12,16 @@
           "result.userInfo.name": "user.name",
           "result.userInfo.age" : "user.age"
       }
-    },
-    "getDepartmentInfoByUserId": {
+    ),
+    "getDepartmentInfoByUserId": (
       "request": {
         "userId": "${user.id}"
       },
       "response": {
         "result.departmentInfo.name" : "user.departmentName"
       }
-    }
-  }
+    )
+  ]
 }
 ```
 接口最终返回响应体示例如下：
