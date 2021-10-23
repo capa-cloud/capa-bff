@@ -2,7 +2,7 @@ package group.rxcloud.capa.bff.domain;
 
 import java.util.Map;
 
-public abstract class InvocationResquest<T> {
+public abstract class InvocationRequest<T> {
 
     private String appId;
 

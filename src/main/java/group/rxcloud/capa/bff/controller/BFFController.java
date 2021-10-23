@@ -2,7 +2,7 @@ package group.rxcloud.capa.bff.controller;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
-import group.rxcloud.capa.bff.domain.InvocationResquest;
+import group.rxcloud.capa.bff.domain.InvocationRequest;
 import group.rxcloud.capa.rpc.CapaRpcClient;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
 import group.rxcloud.cloudruntimes.utils.TypeRef;
@@ -143,7 +143,7 @@ public class BFFController {
          <21414.hhhh#check, json>
         */
         // TODO: 2021/10/19 反序列化body为查询API对象，并且分割不同的方法调用
-        Map<String, InvocationResquest> bffApiDomainMap = new HashMap<>();
+        Map<String, InvocationRequest> bffApiDomainMap = new HashMap<>();
 
         List<Mono<JSON>> invokeList = new ArrayList<>();
         // TODO: 2021/10/19 遍历调用每个API方法对象
@@ -151,12 +151,12 @@ public class BFFController {
             // TODO: 2021/10/19 通过fieldMask获取要调用的目标服务
             String target = "12345.hello#checkHealth";
 
-            InvocationResquest invocationResquest = bffApiDomainMap.get(target);
+            InvocationRequest invocationRequest = bffApiDomainMap.get(target);
 
             Mono<JSON> responseMono = capaRpcClient.invokeMethod(
-                    invocationResquest.getAppId(),
-                    invocationResquest.getMethod(),
-                    invocationResquest.getData(),
+                    invocationRequest.getAppId(),
+                    invocationRequest.getMethod(),
+                    invocationRequest.getData(),
                     HttpExtension.POST,
                     TypeRef.get(JSON.class));
 
