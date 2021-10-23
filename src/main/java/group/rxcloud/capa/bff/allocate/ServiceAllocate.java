@@ -1,10 +1,13 @@
 package group.rxcloud.capa.bff.allocate;
 
-import group.rxcloud.capa.bff.domain.BffApiDomain;
+import group.rxcloud.capa.bff.domain.InvocationResponse;
+import group.rxcloud.capa.bff.domain.ServiceInvocationRequest;
+import group.rxcloud.capa.bff.domain.ServiceInvocationResponse;
 import group.rxcloud.capa.rpc.CapaRpcClient;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
 import group.rxcloud.cloudruntimes.utils.TypeRef;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -20,6 +23,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * Date: 2021/10/22 13:56
  */
 @Component
+@Scope("request")
 public final class ServiceAllocate {
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
@@ -27,13 +31,13 @@ public final class ServiceAllocate {
     @Autowired
     private CapaRpcClient capaRpcClient;
 
-    private final ThreadLocal<ConcurrentHashMap<String, List<InvocationRequest>>> localDynamicParamsMapping;
+    private final ThreadLocal<ConcurrentHashMap<String, List<ServiceInvocationRequest>>> localDynamicParamsMapping;
 
-    private final ThreadLocal<ConcurrentHashMap<InvocationRequest,Integer>> serviceDynamicRequestParamCount;
+    private final ThreadLocal<ConcurrentHashMap<ServiceInvocationRequest,Integer>> serviceDynamicRequestParamCount;
 
     private final ThreadLocal<ConcurrentHashMap<String,String>> paramsSet;
 
-    private final ThreadLocal<CopyOnWriteArrayList<Object>> responseList;
+    private final ThreadLocal<CopyOnWriteArrayList<InvocationResponse>> responseList;
 
     public interface TaskService{
 
@@ -58,11 +62,11 @@ public final class ServiceAllocate {
 
     private void threadLocalReCheck(){
         if (localDynamicParamsMapping.get()==null){
-            ConcurrentHashMap<String, List<InvocationRequest>> tmpMap = new ConcurrentHashMap<>();
+            ConcurrentHashMap<String, List<ServiceInvocationRequest>> tmpMap = new ConcurrentHashMap<>();
             localDynamicParamsMapping.set(tmpMap);
         }
         if (serviceDynamicRequestParamCount.get()==null){
-            ConcurrentHashMap<InvocationRequest, Integer> tmpMap2 = new ConcurrentHashMap<>();
+            ConcurrentHashMap<ServiceInvocationRequest, Integer> tmpMap2 = new ConcurrentHashMap<>();
             serviceDynamicRequestParamCount.set(tmpMap2);
         }
         if (paramsSet.get()==null){
@@ -70,17 +74,17 @@ public final class ServiceAllocate {
             paramsSet.set(tmpSet);
         }
         if (responseList.get()==null){
-            CopyOnWriteArrayList<Object> re = new CopyOnWriteArrayList<>();
+            CopyOnWriteArrayList<InvocationResponse> re = new CopyOnWriteArrayList<>();
             responseList.set(re);
         }
     }
 
-    public Mono allocateService(InvocationRequest taskService){
+    public Mono allocateService(ServiceInvocationRequest taskService){
         threadLocalReCheck();
-        ConcurrentHashMap<String, List<InvocationRequest>> localParamsServiceMapping = localDynamicParamsMapping.get();
-        ConcurrentHashMap<InvocationRequest, Integer> serviceParamCountMapping = serviceDynamicRequestParamCount.get();
+        ConcurrentHashMap<String, List<ServiceInvocationRequest>> localParamsServiceMapping = localDynamicParamsMapping.get();
+        ConcurrentHashMap<ServiceInvocationRequest, Integer> serviceParamCountMapping = serviceDynamicRequestParamCount.get();
         ConcurrentHashMap<String, String> parasmKeyValueMapping = paramsSet.get();
-        CopyOnWriteArrayList<Object> reList = responseList.get();
+        CopyOnWriteArrayList<InvocationResponse> reList = responseList.get();
 
         Map<String,String> params = taskService.params();
         if (CollectionUtils.isEmpty(params)){
@@ -96,9 +100,9 @@ public final class ServiceAllocate {
                     continue;
                 }
                 flag = true;
-                ConcurrentHashMap<String, List<InvocationRequest>> stringListHashMap = localDynamicParamsMapping.get();
+                ConcurrentHashMap<String, List<ServiceInvocationRequest>> stringListHashMap = localDynamicParamsMapping.get();
                 if (stringListHashMap.get(param.getKey())==null){
-                    List<InvocationRequest> list = new ArrayList<>();
+                    List<ServiceInvocationRequest> list = new ArrayList<>();
                     list.add(taskService);
                     Integer count = serviceDynamicRequestParamCount.get().get(taskService);
                     serviceDynamicRequestParamCount.get().put(taskService,count==null?1:count+1);
@@ -115,24 +119,22 @@ public final class ServiceAllocate {
             return null;
         }
         // 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
+        Mono<HashMap> responseMono = capaRpcClient.invokeMethod(
+                taskService.getAppId(),
+                taskService.getMethod(),
+                taskService.getData(),
+                HttpExtension.POST,
+                taskService.getMetaData(),
+                TypeRef.get(HashMap.class));
         if (taskService.sync()){
-            Mono<HashMap> responseMono = capaRpcClient.invokeMethod(
-                    taskService.getAppId(),
-                    taskService.getMethod(),
-                    taskService.getData(),
-                    HttpExtension.POST,
-                    taskService.getMetaData(),
-                    TypeRef.get(HashMap.class));
-
-
-            return responseMono;
-
+            HashMap block = responseMono.block();
+            reList.add(new ServiceInvocationResponse(taskService,block));
         }else {
-            threadPoolExecutor.submit(()->{
+            responseMono.doOnSuccess((s)->{reList.add(new ServiceInvocationResponse(taskService,s));});
 
-
-            });
         }
+
+
         return null;
 
 

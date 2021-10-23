@@ -1,6 +1,8 @@
-package group.rxcloud.capa.bff.allocate;
+package group.rxcloud.capa.bff.domain;
 
-import group.rxcloud.capa.bff.domain.BffApiDomain;
+
+import group.rxcloud.capa.bff.allocate.ServiceAllocate;
+import group.rxcloud.capa.bff.domain.InvocationResquest;
 
 import java.util.Map;
 
@@ -8,12 +10,12 @@ import java.util.Map;
  * Author: KJ.ZHAO
  * Date: 2021/10/23 11:27
  */
-public class InvocationRequest implements ServiceAllocate.TaskService {
+public class ServiceInvocationRequest<T> extends InvocationResquest<T> implements ServiceAllocate.TaskService {
     private String appId;
 
     private String method;
 
-    private Object data;
+    private T data;
 
     private Map<String,String> metaData;
 
@@ -34,11 +36,11 @@ public class InvocationRequest implements ServiceAllocate.TaskService {
         this.method = method;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
 
