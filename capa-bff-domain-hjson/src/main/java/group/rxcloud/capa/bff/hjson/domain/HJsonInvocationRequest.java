@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.domain.InvocationRequest;
 import group.rxcloud.capa.bff.hjson.invoke.HJsonInvoker;
 import lombok.Data;
-import group.rxcloud.capa.bff.hjson.allocate.HJsonInvoker;
 import group.rxcloud.capa.bff.hjson.json.JsonValueMapper;
 import lombok.ToString;
 
