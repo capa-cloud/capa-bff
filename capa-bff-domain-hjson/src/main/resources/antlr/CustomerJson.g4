@@ -1,5 +1,7 @@
 grammar CustomerJson;
 
+import CommonLexerRules;
+
 customerJson
     : '{' service (',' service)* '}'
     ;
@@ -103,6 +105,8 @@ singlerequestHeaderFieldValue
    | 'true'
    | 'false'
    | 'null'
+   | requestHeaderObjValue
+   | requestHeaderArr
    ;
 
 value
@@ -113,38 +117,17 @@ value
    | 'null'
    ;
 
-STRING
-   : '"' (ESC | SAFECODEPOINT)* '"'
+requestHeaderObjValue
+   : '{' requestHeaderPair (',' requestHeaderPair)* '}'
+   | '{' '}'
    ;
 
-fragment ESC
-   : '\\' (["\\/bfnrt] | UNICODE)
+requestHeaderPair
+   : STRING ':' singlerequestHeaderFieldValue
    ;
 
-fragment SAFECODEPOINT
-   : ~ ["\\\u0000-\u001F]
+requestHeaderArr
+   : '[' singlerequestHeaderFieldValue (',' singlerequestHeaderFieldValue)* ']'
+   | '[' ']'
    ;
 
-NUMBER
-   : '-'? INT ('.' [0-9] +)? EXP?
-   ;
-
-fragment HEX
-   : [0-9a-fA-F]
-   ;
-
-fragment UNICODE
-   : 'u' HEX HEX HEX HEX
-   ;
-
-fragment INT
-   : '0' | [1-9] [0-9]*
-   ;
-
-fragment EXP
-   : [Ee] [+\-]? INT
-   ;
-
-WS
-   : [ \t\r\n]+ -> skip
-   ;
