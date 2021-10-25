@@ -91,6 +91,8 @@ public class BffParseListener extends CustomerJsonBaseListener {
         String requestHeaderValue = ctx.getStart().getText();
         if (ctx.getStart().getType() == 15) {
             request.getMetadata().put(requestHeaderKey, AntlrUtils.parseRowString(requestHeaderValue));
+        } else {
+            request.getMetadata().put(requestHeaderKey, requestHeaderValue);
         }
 
         super.enterSinglerequestHeaderFieldValue(ctx);

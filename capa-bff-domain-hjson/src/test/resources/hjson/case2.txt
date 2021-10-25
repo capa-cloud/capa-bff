@@ -1,0 +1,29 @@
+{
+    "21754.ibumarketingemailgatewayservice": [
+        "sendemail":(
+          request: {
+            "emailRequest": {
+                "tracingId": "1",
+                "emailAlias": "1",
+                "emailFrom": "1",
+                "channelId": "1",
+                "channelOptions": {
+                    "key": "1"
+                }
+            },
+            "emailDetail": {
+                "email": "1",
+                "title": "1",
+                "subtitle": "1",
+                "content": "1"
+            }
+        },
+        requestHeader: {
+            "timeout": "5000"
+        },
+        response: {
+            "code": "user.code"
+        }
+ )
+    ]
+}

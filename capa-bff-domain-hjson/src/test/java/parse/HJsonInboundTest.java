@@ -6,11 +6,10 @@ import group.rxcloud.capa.bff.hjson.inbound.HJsonInbound;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import utils.HJsonInvocationRequestHelper;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -45,12 +44,19 @@ public class HJsonInboundTest {
 
     @Test
     public void testCase1() throws IOException {
-        URL resource = getClass().getResource("hjson\\case1.txt");
+        String requestStr = Files.readString(new ClassPathResource("hjson/case1.txt").getFile().toPath());
+        List<HJsonInvocationRequest> inbound = new HJsonInbound().inbound(requestStr, null);
 
-        String readString = Files.readString(new File("hjson/case1.txt").toPath());
-        List<HJsonInvocationRequest> inbound = new HJsonInbound().inbound(readString, null);
-        for (int i = 0; i < inbound.size(); i++) {
-            Assertions.assertEquals(inbound.get(i), targetResultMap.get("case1").get(i));
-        }
+        String responseStr = Files.readString(new ClassPathResource("hjson/result1.txt").getFile().toPath());
+        Assertions.assertEquals(JSON.toJSONString(inbound), responseStr);
+    }
+
+    @Test
+    public void testCase2() throws IOException {
+        String requestStr = Files.readString(new ClassPathResource("hjson/case2.txt").getFile().toPath());
+        List<HJsonInvocationRequest> inbound = new HJsonInbound().inbound(requestStr, null);
+
+        String responseStr = Files.readString(new ClassPathResource("hjson/result2.txt").getFile().toPath());
+        Assertions.assertEquals(JSON.toJSONString(inbound), responseStr);
     }
 }
