@@ -152,7 +152,7 @@
     ]
 }
 ```
-此时依赖关系如下：
+此时依赖关系如下：对应的图如下
 1. ${kol.applyId} 
    - 依赖服务 20725.gscontentcenterservice#getkoldetail；
    - request服务:20725.gscontentcenterservice#getkolapplydetail
@@ -169,16 +169,24 @@
    - 依赖服务 24901.livebackendservice#getLiveInfo；
    - request服务:11933.contentdeliveryservice#getarticleinfo
 
-构造成如下对象
+![](./images/无环有向图.png)
+
+所以，我们可以将一个字段依赖的上游服务和所使用的服务，构造成如下对象
 
 ```java
 class DependOnFieldInfo {
-    // 需要依赖上下文的字段
-    String field;
-    // 依赖的服务请求，【appid#method】。e.g.：20725.gscontentcenterservice#getkoldetail
-    String dependOnServiceMethod;
-    // 字段使用的服务请求，【appid#method】。e.g.：20725.gscontentcenterservice#getkoldetail
-    String requestServiceMethod;
+   /**
+    * 需要依赖上下文的字段
+    */
+   private String field;
+   /**
+    * 依赖的服务请求
+    */
+   private InvocationRequest<T> dependOnServiceMethod;
+   /**
+    * 字段使用的服务请求
+    */
+   private InvocationRequest<T> requestServiceMethod;
 }
 ```
 
@@ -188,37 +196,30 @@ class DependOnFieldInfo {
 再构造如下有向图的相关类
 端点信息：即一个serviceMethod的string
 ```
-private String serviceMethod;
+private InvocationRequest serviceMethod;
 ```
 
 边信息
 ```java
-class Edge {
-    // 起点
-    private String src;
-    // 终点
-    private String dest;
+class InvocationEdge<T> {
+   /**
+    * 边的起点（请求的来源）
+    */
+   private InvocationRequest<T> src;
+   /**
+    * 边的终点（请求的去向）
+    */
+   private InvocationRequest<T> dest;
 }
+
 ```
 
 定义方法，来实现对图的构造
 ```java
 class GraphUtil {
-    /**
-     * 添加一个端点
-     * @param v string
-     * @return 新增端点的编号，-1表示插入失败
-     */
-    public int add(String v) {
-        
-    }
-    /**
-     * 添加一个边
-     * @param e 边
-     */
-    public void add(Edge e) {
-        
-    }
+   public void queryHasIllegalInvocation(List<DependOnFieldInfo<T>> fieldInfoList) throws IllegalInvocationRequestException {
+
+   }
 }
 ```
 
