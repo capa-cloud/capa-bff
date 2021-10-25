@@ -144,3 +144,7 @@ fragment INT
 fragment EXP
    : [Ee] [+\-]? INT
    ;
+
+WS
+   : [ \t\r\n]+ -> skip
+   ;

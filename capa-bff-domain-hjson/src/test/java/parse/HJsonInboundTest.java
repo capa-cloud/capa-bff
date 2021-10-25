@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
-import utils.HJsonInvocationRequestHelper;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,32 +14,6 @@ import java.util.*;
 
 @DisplayName("请求体解析测试")
 public class HJsonInboundTest {
-    private static final Map<String, List<HJsonInvocationRequest>> targetResultMap = new HashMap<>();
-
-    static {
-        List<HJsonInvocationRequest> case1 = new ArrayList<>();
-        HJsonInvocationRequest getUserInfo = HJsonInvocationRequestHelper.builder("10011111", "getUserInfo")
-                .buildMetadata("{}")
-                .buildData("{\"id\": 1}")
-                .buildResponseData("{\n" +
-                        "          \"result.userInfo.id\": \"user.id\",\n" +
-                        "          \"result.userInfo.name\": \"user.name\",\n" +
-                        "          \"result.userInfo.age\" : \"user.age\"\n" +
-                        "      }")
-                .build();
-        HJsonInvocationRequest getDepartmentInfoByUserId = HJsonInvocationRequestHelper.builder("10011111", "getDepartmentInfoByUserId")
-                .buildMetadata("{}")
-                .buildData("{\n" +
-                        "        \"userId\": \"${user.id}\"\n" +
-                        "      }")
-                .buildResponseData("{\n" +
-                        "        \"result.departmentInfo.name\" : \"user.departmentName\"\n" +
-                        "      }")
-                .build();
-        case1.add(getUserInfo);
-        case1.add(getDepartmentInfoByUserId);
-        targetResultMap.put("case1", case1);
-    }
 
     @Test
     public void testCase1() throws IOException {
