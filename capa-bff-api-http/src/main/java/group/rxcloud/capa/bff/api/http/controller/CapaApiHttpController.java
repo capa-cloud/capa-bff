@@ -33,18 +33,23 @@ public class CapaApiHttpController {
     }
 
     @RequestMapping(value = "/capabff")
-    public @ResponseBody
-    String bff(@RequestBody String request) throws Exception {
+    public @ResponseBody String bff(@RequestBody String request) {
         DefaultContext context = new DefaultContext();
 
         HJsonInbound hJsonInbound = new HJsonInbound();
         HJsonOutbound hJsonOutbound = new HJsonOutbound();
 
-        List<HJsonInvocationRequest> hJsonInvocationRequests = hJsonInbound.inbound(request, context);
-        List<HJsonInvocationResponse> hJsonInvocationResponses = hJsonInvoker.invoke(hJsonInvocationRequests, context);
-        JSONObject outbound = hJsonOutbound.outbound(hJsonInvocationRequests, hJsonInvocationResponses, context);
+        try {
+            List<HJsonInvocationRequest> hJsonInvocationRequests = hJsonInbound.inbound(request, context);
+            List<HJsonInvocationResponse> hJsonInvocationResponses = hJsonInvoker.invoke(hJsonInvocationRequests, context);
+            JSONObject outbound = hJsonOutbound.outbound(hJsonInvocationRequests, hJsonInvocationResponses, context);
 
-        String responseStr = outbound.toJSONString();
-        return responseStr;
+            return outbound.toJSONString();
+        } catch (Exception e) {
+            JSONObject exception = new JSONObject();
+            exception.put("msg", e.getMessage());
+            exception.put("code", "300");
+            return exception.toJSONString();
+        }
     }
 }

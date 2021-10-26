@@ -4,9 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class JsonValueMapper {
 
@@ -42,7 +40,7 @@ public class JsonValueMapper {
 
         // 先把JsonObject转成Json字符串
         String jsonString = jsonObject.toJSONString();
-        if (jsonObject == null || jsonString.length() == 0) {
+        if (jsonString == null || jsonString.length() == 0) {
             return jsonObject;
         }
 
@@ -57,13 +55,11 @@ public class JsonValueMapper {
         }
 
         // 把替换后的Json字符串，反序列化成JSONObject对象
-        JSONObject parseObject = JSON.parseObject(jsonString);
-        return parseObject;
+        return JSON.parseObject(jsonString);
     }
 
     private static String generateToken(String key) {
-        String token = String.format(TOKEN, key);
-        return token;
+        return String.format(TOKEN, key);
     }
 
     private static String generateTokenValue(Object value) {
@@ -91,7 +87,7 @@ public class JsonValueMapper {
 
         // 解析PointPath{a.b.c}路径格式
         String[] paths = valuePath.split("\\.");
-        if (paths == null || paths.length == 0) {
+        if (paths.length == 0) {
             return null;
         }
 
@@ -113,62 +109,6 @@ public class JsonValueMapper {
         }
         return object;
     }
-
-    public static void main(String[] args) {
-        test_replaceValuesByParameters();
-        test_findValueByPointPath();
-    }
-
-    private static void test_replaceValuesByParameters() {
-        JSONObject c = new JSONObject();
-        c.put("int", "${user.id}");
-        c.put("str", "${user.name}");
-
-        JSONObject b = new JSONObject();
-        b.put("c", c);
-
-        JSONObject a = new JSONObject();
-        a.put("b", b);
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("user.id", 1);
-        parameters.put("user.name", "2");
-
-        JSONObject jsonObject = JsonValueMapper.replaceValuesByParameters(a, parameters);
-
-        JSONObject _c = jsonObject.getJSONObject("b").getJSONObject("c");
-        Object _int = _c.get("int");
-        Object _str = _c.get("str");
-
-        System.out.println(_int);
-        System.out.println(_str);
-
-        assert Objects.equals(_int, 1);
-        assert Objects.equals(_str, "2");
-    }
-
-    private static void test_findValueByPointPath() {
-        JSONObject c = new JSONObject();
-        c.put("int", 1);
-        c.put("str", "2");
-
-        JSONObject b = new JSONObject();
-        b.put("c", c);
-
-        JSONObject a = new JSONObject();
-        a.put("b", b);
-
-        Object _int = JsonValueMapper.findValueByPointPath(a, "b.c.int");
-        Object _str = JsonValueMapper.findValueByPointPath(a, "b.c.str");
-
-        System.out.println(_int);
-        System.out.println(_str);
-
-        assert Objects.equals(_int, 1);
-        assert Objects.equals(_str, "2");
-    }
-
-
 
 
     public static void replaceValueByRealPath(JSONObject response, String path, Object obj) {
@@ -197,7 +137,7 @@ public class JsonValueMapper {
 
         }
 
-        if (pre!=null && !StringUtils.isEmpty(finalPath)){
+        if (!StringUtils.isEmpty(finalPath)){
             pre.put(finalPath,obj);
         }
     }

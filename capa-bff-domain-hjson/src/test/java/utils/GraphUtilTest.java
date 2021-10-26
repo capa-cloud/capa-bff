@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class GraphUtilTest {
     @Test
-    public void hasNoCycle_test() {
+    public void hasNoCycle_test() throws Exception {
         List<HJsonInvocationRequest> list = new ArrayList<>();
 
         HJsonInvocationRequest serviceA = getInvocationRequest("serviceA", null, ImmutableMap.of("name", "b.field"));
@@ -34,7 +34,7 @@ public class GraphUtilTest {
     }
 
     @Test
-    public void hasCycle_test() {
+    public void hasCycle_test() throws Exception {
         List<HJsonInvocationRequest> list = new ArrayList<>();
 
         HJsonInvocationRequest serviceA = getInvocationRequest("serviceA",  ImmutableMap.of("d.field1", ""), ImmutableMap.of("name", "b.field"));
@@ -52,7 +52,7 @@ public class GraphUtilTest {
     }
 
     @Test
-    public void conflict_empty_test() {
+    public void conflict_empty_test() throws Exception{
         try {
             HJsonInvocationRequest serviceW = getInvocationRequest("serviceW", ImmutableMap.of("w.field", ""), null);
             HJsonInvocationRequest serviceA = getInvocationRequest("serviceA", null, ImmutableMap.of("name", "b.field"));
@@ -68,7 +68,7 @@ public class GraphUtilTest {
     }
 
     @Test
-    public void empty_test() {
+    public void empty_test() throws Exception{
         try {
             List<HJsonInvocationRequest> list = new ArrayList<>();
             HJsonInvocationRequest serviceA = getInvocationRequest("serviceA", ImmutableMap.of("b.field", ""), null);
@@ -81,7 +81,7 @@ public class GraphUtilTest {
     }
 
     @Test
-    public void hasCycle_myself_test() {
+    public void hasCycle_myself_test() throws Exception{
         try {
             List<HJsonInvocationRequest> list = new ArrayList<>();
             HJsonInvocationRequest serviceA = getInvocationRequest("serviceA", ImmutableMap.of("a.name", ""), ImmutableMap.of("name", "a.name"));

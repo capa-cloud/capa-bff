@@ -1,12 +1,15 @@
 package group.rxcloud.capa.bff.hjson.util;
 
 
-import group.rxcloud.capa.bff.domain.DependOnFieldInfo;
-import group.rxcloud.capa.bff.domain.InvocationRequest;
 import group.rxcloud.capa.bff.exception.IllegalInvocationRequestException;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author wangjun
@@ -70,7 +73,6 @@ public class GraphUtil {
                 for (String nickName : service.getRequiredParams().keySet()) {
 
 
-
                     HJsonInvocationRequest serviceDepend = serviceResponse.get(nickName);
                     if (serviceDepend == null) {
                         throw new IllegalInvocationRequestException("[" + service.getAppId() + "] " + nickName + "  no service offer");
@@ -83,41 +85,41 @@ public class GraphUtil {
         }
     }
 
-    public  boolean  find() {
+    public boolean find() throws IllegalInvocationRequestException {
         // 从出发节点到当前节点的轨迹
-        List<Integer> trace =new ArrayList<Integer>();
+        List<Integer> trace = new ArrayList<Integer>();
         //返回值
-        List<String> reslut = new ArrayList<>();
-        if(adjacencyMatrix.length>0) {
-            findCycle(0, trace,reslut);
+        List<String> result = new ArrayList<>();
+        if (adjacencyMatrix.length > 0) {
+            findCycle(0, trace, result);
         }
-        if(reslut.size()==0) {
-            reslut.add("no cycle!");
+        if (result.size() == 0) {
+            result.add("no cycle!");
             return false;
         }
-        throw new IllegalInvocationRequestException(reslut.get(0));
+        throw new IllegalInvocationRequestException(result.get(0));
     }
 
     private void findCycle(int v, List<Integer> trace, List<String> reslut) {
         int j;
         //添加闭环信息
-        if((j=trace.indexOf(v))!=-1) {
+        if ((j = trace.indexOf(v)) != -1) {
             StringBuffer sb = new StringBuffer();
             HJsonInvocationRequest startNode = serviceNodes.get(trace.get(j));
-            while(j<trace.size()) {
-                sb.append(serviceNodes.get(trace.get(j)).getAppId()+"-");
+            while (j < trace.size()) {
+                sb.append(serviceNodes.get(trace.get(j)).getAppId() + "-");
                 j++;
             }
-            reslut.add("cycle:"+sb.toString()+startNode.getAppId());
+            reslut.add("cycle:" + sb.toString() + startNode.getAppId());
             return;
         }
         trace.add(v);
-        for(int i=0;i<serviceNodes.size();i++){
-            if(adjacencyMatrix[v][i]==1) {
-                findCycle(i,trace,reslut);
+        for (int i = 0; i < serviceNodes.size(); i++) {
+            if (adjacencyMatrix[v][i] == 1) {
+                findCycle(i, trace, reslut);
             }
         }
-        trace.remove(trace.size()-1);
+        trace.remove(trace.size() - 1);
     }
 
 
