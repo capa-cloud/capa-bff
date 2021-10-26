@@ -39,6 +39,6 @@ public class HJsonInvocationRequest extends InvocationRequest<JSONObject>
 
     @Override
     public boolean sync() {
-        return true;
+        return false;
     }
 }
