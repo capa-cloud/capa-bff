@@ -1,0 +1,1 @@
+[{"appId":"21754.ibumarketingemailgatewayservice","data":{"emailRequest":{"tracingId":"1","emailFrom":"1","emailAlias":"1","channelOptions":{"key":"1"},"channelId":"1"},"emailDetail":{"subtitle":"1","title":"1","email":"1","content":"1"}},"metadata":{"timeout":"5000"},"method":"sendemail","requiredParams":{},"responseDataFormat":{"code":"user.code"}}]

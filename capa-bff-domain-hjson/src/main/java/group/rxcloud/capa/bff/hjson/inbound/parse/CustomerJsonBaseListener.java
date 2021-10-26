@@ -274,6 +274,42 @@ public class CustomerJsonBaseListener implements CustomerJsonListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitValue(CustomerJsonParser.ValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRequestHeaderObjValue(CustomerJsonParser.RequestHeaderObjValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRequestHeaderObjValue(CustomerJsonParser.RequestHeaderObjValueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRequestHeaderPair(CustomerJsonParser.RequestHeaderPairContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRequestHeaderPair(CustomerJsonParser.RequestHeaderPairContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRequestHeaderArr(CustomerJsonParser.RequestHeaderArrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRequestHeaderArr(CustomerJsonParser.RequestHeaderArrContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

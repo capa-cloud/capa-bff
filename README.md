@@ -8,20 +8,23 @@
 {
   "10011111": [
     "getUserInfo":(
-      "request": {
+      request: {
           "id": 1
        },
-      "response": {
+      requestHeader: {
+          "timeout": "5000"
+      },
+      response: {
           "result.userInfo.id": "user.id",
           "result.userInfo.name": "user.name",
           "result.userInfo.age" : "user.age"
       }
     ),
     "getDepartmentInfoByUserId": (
-      "request": {
+      request: {
         "userId": "${user.id}"
       },
-      "response": {
+      response: {
         "result.departmentInfo.name" : "user.departmentName"
       }
     )
@@ -39,6 +42,12 @@
   }
 }
 ```
+
+### DSL支持的数据类型
+- 字符串
+- 数字
+- 对象
+- 数组
 
 # 相关概念定义
 ## 1、大`json`格式的请求体

@@ -38,11 +38,6 @@ public class BffParseListener extends CustomerJsonBaseListener {
     }
 
     @Override
-    public void enterServiceId(CustomerJsonParser.ServiceIdContext ctx) {
-        super.enterServiceId(ctx);
-    }
-
-    @Override
     public void enterSingleRequestFieldValue(CustomerJsonParser.SingleRequestFieldValueContext ctx) {
         RuleContext ruleContext = ctx.getParent();
         while (!(ruleContext instanceof CustomerJsonParser.ServiceBodyContext)) {
@@ -89,8 +84,11 @@ public class BffParseListener extends CustomerJsonBaseListener {
         HJsonInvocationRequest request = requestMap.get(requestKey);
         String requestHeaderKey = AntlrUtils.parseRowString(ctx.getParent().getStart().getText());
         String requestHeaderValue = ctx.getStart().getText();
+        // note: 底层调用目标接口的请求头只需要传入字符串即可
         if (ctx.getStart().getType() == 15) {
             request.getMetadata().put(requestHeaderKey, AntlrUtils.parseRowString(requestHeaderValue));
+        } else {
+            request.getMetadata().put(requestHeaderKey, requestHeaderValue);
         }
 
         super.enterSinglerequestHeaderFieldValue(ctx);
