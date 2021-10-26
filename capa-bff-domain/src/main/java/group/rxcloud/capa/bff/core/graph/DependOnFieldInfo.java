@@ -1,4 +1,6 @@
-package group.rxcloud.capa.bff.domain;
+package group.rxcloud.capa.bff.core.graph;
+
+import group.rxcloud.capa.bff.domain.InvocationRequest;
 
 /**
  * @author wangjun

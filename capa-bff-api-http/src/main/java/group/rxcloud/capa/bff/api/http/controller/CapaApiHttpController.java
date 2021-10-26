@@ -28,12 +28,13 @@ public class CapaApiHttpController {
 
     @RequestMapping(value = "/vi/health")
     @ResponseBody
-    public String checkhealth(){
+    public String checkhealth() {
         return "ok";
     }
 
     @RequestMapping(value = "/capabff")
-    public @ResponseBody String bff(@RequestBody String request) {
+    public @ResponseBody
+    String bff(@RequestBody String request) {
         DefaultContext context = new DefaultContext();
 
         HJsonInbound hJsonInbound = new HJsonInbound();

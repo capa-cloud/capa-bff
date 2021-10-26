@@ -103,6 +103,12 @@ public class HJsonOutbound implements Outbound<
                 final String path = aliasEntry.getKey();
                 final String alias = aliasEntry.getValue();
 
+                // 特殊路径处理
+                boolean specialAliasValueMap = this.generateSpecialAliasValueMap(aliasValueMap, responseData, path, alias);
+                if (specialAliasValueMap) {
+                    continue;
+                }
+
                 // 根据路径获取对应的值
                 Object aliasValue = JsonValueMapper.findValueByPointPath(responseData, path);
                 // 生成Map<别名，值>
@@ -110,6 +116,14 @@ public class HJsonOutbound implements Outbound<
             }
         }
         return aliasValueMap;
+    }
+
+    private boolean generateSpecialAliasValueMap(Map<String, Object> aliasValueMap, JSONObject responseData, String path, String alias) {
+        if ("*".equals(path)) {
+            aliasValueMap.put(alias, responseData);
+            return true;
+        }
+        return false;
     }
 
     private void initRequestEntitiesToBothMap(List<HJsonInvocationRequest> hJsonInvocationRequests, Map<String, HJsonMappingEntity> entityMap, Map<String, HJsonMappingEntity> failureEntityMap) {
@@ -174,51 +188,60 @@ public class HJsonOutbound implements Outbound<
 
             // 将别名路径解析为路径数组：user.id -> [user, id]
             String[] valueByPointPath = JsonValueMapper.findValueByPointPath(aliasPath);
-            if (valueByPointPath == null) {
+            if (valueByPointPath == null || valueByPointPath.length == 0) {
                 continue;
             }
 
-            // 当前遍历时的指针
-            JSONObject point = null;
-            // 遍历扫描JSON对象
-            for (int i = 0; i < valueByPointPath.length; i++) {
+            // 只有一个路径：直接添加到根节点
+            if (valueByPointPath.length == 1) {
                 // 当前的路径节点key
-                final String jsonKey = valueByPointPath[i];
+                final String jsonKey = valueByPointPath[0];
+                responseBody.put(jsonKey, aliasValue);
+            }
+            // 有多个路径：循环遍历，构建层级关系
+            else {
+                // 当前遍历时的指针
+                JSONObject point = null;
+                // 遍历扫描JSON对象
+                for (int i = 0; i < valueByPointPath.length; i++) {
+                    // 当前的路径节点key
+                    final String jsonKey = valueByPointPath[i];
 
-                // 起始路径：需要基于根节点进行绑定
-                if (i == 0) {
-                    // 如果已经存在，更新指针为已存在节点
-                    if (responseBody.get(jsonKey) != null) {
-                        point = responseBody.getJSONObject(jsonKey);
+                    // 起始路径：需要基于根节点进行绑定
+                    if (i == 0) {
+                        // 如果已经存在，更新指针为已存在节点
+                        if (responseBody.get(jsonKey) != null) {
+                            point = responseBody.getJSONObject(jsonKey);
+                        }
+                        // 如果不存在，在根节点创建一个新的node，并赋值给指针
+                        else {
+                            point = new JSONObject();
+                            responseBody.put(jsonKey, point);
+                        }
                     }
-                    // 如果不存在，在根节点创建一个新的node，并赋值给指针
+
+                    // 此时，该次遍历的根节点已经指向point指针，不需要再向根节点进行绑定
+
+                    // 中间路径：建立不存在的K:V关系
+                    else if (i < valueByPointPath.length - 1) {
+                        // 如果已经存在该路径
+                        if (point.get(jsonKey) != null) {
+                            // 如果已经存在，更新指针
+                            point = point.getJSONObject(jsonKey);
+                        }
+                        // 如果不存在该路径，将该路径添加为JSONObject节点
+                        else {
+                            JSONObject node = new JSONObject();
+                            point.put(jsonKey, node);
+                            // 创建新节点，更新指针
+                            point = node;
+                        }
+                    }
+
+                    // 终端路径：将值放入JSONObject
                     else {
-                        point = new JSONObject();
-                        responseBody.put(jsonKey, point);
+                        point.put(jsonKey, aliasValue);
                     }
-                }
-
-                // 此时，该次遍历的根节点已经指向point指针，不需要再向根节点进行绑定
-
-                // 中间路径：建立不存在的K:V关系
-                else if (i < valueByPointPath.length - 1) {
-                    // 如果已经存在该路径
-                    if (point.get(jsonKey) != null) {
-                        // 如果已经存在，更新指针
-                        point = point.getJSONObject(jsonKey);
-                    }
-                    // 如果不存在该路径，将该路径添加为JSONObject节点
-                    else {
-                        JSONObject node = new JSONObject();
-                        point.put(jsonKey, node);
-                        // 创建新节点，更新指针
-                        point = node;
-                    }
-                }
-
-                // 终端路径：将值放入JSONObject
-                else {
-                    point.put(jsonKey, aliasValue);
                 }
             }
         }
@@ -253,6 +276,7 @@ public class HJsonOutbound implements Outbound<
         responseDataFormat.put("b.c.city.name", "user.address.city.name");
         responseDataFormat.put("b.c.address.id", "city.address.id");
         responseDataFormat.put("b.c.address.name", "city.address.name");
+        responseDataFormat.put("*", "12345#hello");
 
         HJsonInvocationRequest hJsonInvocationRequest = new HJsonInvocationRequest();
         hJsonInvocationRequest.setAppId("12345");

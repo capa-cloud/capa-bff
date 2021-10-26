@@ -4,12 +4,7 @@ package group.rxcloud.capa.bff.hjson.util;
 import group.rxcloud.capa.bff.exception.IllegalInvocationRequestException;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author wangjun
@@ -22,14 +17,12 @@ public class GraphUtil {
      */
     private List<HJsonInvocationRequest> serviceNodes = new ArrayList<>();
 
-
     /**
      * 有向图的邻接矩阵
      */
     private int[][] adjacencyMatrix;
 
     private Map<String, HJsonInvocationRequest> serviceResponse;
-
 
     public GraphUtil(List<HJsonInvocationRequest> services) {
         if (services == null) {
@@ -121,6 +114,4 @@ public class GraphUtil {
         }
         trace.remove(trace.size() - 1);
     }
-
-
 }

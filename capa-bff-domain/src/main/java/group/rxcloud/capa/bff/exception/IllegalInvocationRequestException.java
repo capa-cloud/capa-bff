@@ -5,6 +5,7 @@ package group.rxcloud.capa.bff.exception;
  * @date 2021/10/25
  */
 public class IllegalInvocationRequestException extends RuntimeException {
+
     public IllegalInvocationRequestException() {
     }
 

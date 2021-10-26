@@ -23,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 @Configuration
 public class SpringBeanConfiguration {
 
+    // TODO: 2021/10/26 因为capa并未就绪，所以先自己写一个capa的实现
     @Component
     public static class HttpInvokeClient {
 
@@ -46,14 +47,17 @@ public class SpringBeanConfiguration {
     }
 
     @Component
-    public static class MyTmpCapaRpcClient implements CapaRpcClient {
+    public static class TempCapaRpcClient implements CapaRpcClient {
 
-        String CTRIP_SERVICE_MESH_TEMPLATE = "http://{serviceId}.soa.mesh/{operation}";
+        /**
+         * TODO 底层调用servicemesh
+         */
+        private static final String CTRIP_SERVICE_MESH_TEMPLATE = "http://{serviceId}.soa.mesh/{operation}";
 
         @Autowired
         private HttpInvokeClient httpInvokeClient;
 
-        private ObjectSerializer objectSerializer = new DefaultObjectSerializer();
+        private final ObjectSerializer objectSerializer = new DefaultObjectSerializer();
 
         @Override
         public <T> Mono<T> invokeMethod(String appId, String methodName, Object data, HttpExtension httpExtension, Map<String, String> metadata, TypeRef<T> type) {
@@ -62,6 +66,7 @@ public class SpringBeanConfiguration {
                     .replace("{serviceId}", appId.toLowerCase())
                     .replace("{operation}", methodName.toLowerCase());
 
+            // 目前只有HJson一种实现，所以先写死成JSONObject
             if (data instanceof JSONObject) {
                 String json = ((JSONObject) data).toJSONString();
                 System.out.println("invokeMethod request:" + json);
