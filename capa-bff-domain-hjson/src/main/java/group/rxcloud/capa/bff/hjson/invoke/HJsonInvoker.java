@@ -6,6 +6,7 @@ import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
 import group.rxcloud.capa.bff.hjson.json.JsonValueMapper;
+import group.rxcloud.capa.bff.hjson.util.GraphUtil;
 import group.rxcloud.capa.bff.hjson.util.InnerMethodUtil;
 import group.rxcloud.capa.bff.invoke.Invoke;
 import group.rxcloud.capa.rpc.CapaRpcClient;
@@ -47,6 +48,12 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
     public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) {
         log.info(String.format("title: invoke start  invocationList: %s",JSONObject.toJSONString(invocationList)));
         if (invocationList!=null && invocationList.size()>=10){
+            return new ArrayList<>();
+        }
+        try {
+            new GraphUtil(invocationList).find();
+        } catch (Throwable e) {
+            e.printStackTrace();
             return new ArrayList<>();
         }
         ConcurrentHashMap<String, List<HJsonInvocationRequest>> localParamsServiceMapping = new ConcurrentHashMap<>();
