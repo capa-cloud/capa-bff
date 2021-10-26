@@ -116,6 +116,7 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
             }
         }
         // 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
+        log.info("invoke remote service start ,taskService:"+JSONObject.toJSONString(taskService));
         Mono<byte[]> responseMono = capaRpcClient.invokeMethod(
                 taskService.getAppId(),
                 taskService.getMethod(),
@@ -135,7 +136,7 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                 log.error(String.format("title: invoke err  taskService: %s",JSONObject.toJSONString(taskService)),e);
                 return null;
             }
-
+            log.info("invoke remote service finish ,response:"+JSONObject.toJSONString(response));
             reList.add(new HJsonInvocationResponse(taskService, response));
             Map<String, String> responseDataFormat = taskService.getResponseDataFormat();
             log.info("[HJsonInvoker] before responseDataFormat");
@@ -188,7 +189,7 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
             log.info("[HJsonInvoker] before responseDataFormat is not sync");
             responseMono.doOnSuccess((bytes) -> {
                 JSONObject response = generateResponseObj(bytes);
-
+                log.info("invoke remote service finish ,response:"+JSONObject.toJSONString(response));
                 reList.add(new HJsonInvocationResponse(taskService, response));
                 Map<String, String> responseDataFormat = taskService.getResponseDataFormat();
                 if (responseDataFormat!=null && !responseDataFormat.isEmpty()){
