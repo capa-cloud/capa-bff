@@ -66,7 +66,7 @@ public class InnerMethodUtil {
             return JSONObject.toJSONString(target);
         }
         byte[] bytes = JSONObject.toJSONString(target).getBytes(StandardCharsets.UTF_8);
-        return new String(methodMap.get(methodName).run(bytes));
+        return new String(methodMap.get(methodName.toLowerCase()).run(bytes));
     }
 
 
