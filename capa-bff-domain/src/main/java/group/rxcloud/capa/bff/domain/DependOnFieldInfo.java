@@ -10,11 +10,11 @@ public class DependOnFieldInfo<T> {
      */
     private String field;
     /**
-     * 依赖的服务请求，【appid#method】。e.g.：20725.gscontentcenterservice#getkoldetail
+     * 依赖的服务请求
      */
     private InvocationRequest<T> dependOnServiceMethod;
     /**
-     * 字段使用的服务请求，【appid#method】。e.g.：20725.gscontentcenterservice#getkoldetail
+     * 字段使用的服务请求
      */
     private InvocationRequest<T> requestServiceMethod;
 
