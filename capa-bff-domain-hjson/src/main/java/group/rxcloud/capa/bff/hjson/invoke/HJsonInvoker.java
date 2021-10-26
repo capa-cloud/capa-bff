@@ -180,6 +180,8 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                         System.out.println(JSONObject.toJSONString(taskService)+"resp 中 " +path +"没有别名");
                         nickName = path;
                     }
+                    // todo update nickname
+                    responseDataFormat.put(path,nickName);
                     // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
                     nickName = nickName==null?"":nickName;
                     obj = obj==null?new JSONObject():obj;
