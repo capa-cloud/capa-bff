@@ -32,74 +32,46 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
 
     @Autowired
     private CapaRpcClient capaRpcClient;
-//
-//    private final ThreadLocal<ConcurrentHashMap<String, List<HJsonInvocationRequest>>> localDynamicParamsMapping;
-//
-//    private final ThreadLocal<ConcurrentHashMap<HJsonInvocationRequest, Integer>> serviceDynamicRequestParamCount;
-//
-//    private final ThreadLocal<ConcurrentHashMap<String, Object>> paramsSet;
-//
-//    private final ThreadLocal<CopyOnWriteArrayList<HJsonInvocationResponse>> responseList;
-//
-//    private final ThreadLocal<CountDownLatch> cyclicBarrierThreadLocal;
-
 
     @Override
-    public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) {
+    public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) throws RuntimeException {
         log.info(String.format("title: invoke start  invocationList: %s",JSONObject.toJSONString(invocationList)));
-        if (invocationList!=null && invocationList.size()>=10){
+        if (invocationList != null && invocationList.size() >= 10) {
             return new ArrayList<>();
         }
-        try {
-            new GraphUtil(invocationList).find();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+        new GraphUtil(invocationList).find();
         ConcurrentHashMap<String, List<HJsonInvocationRequest>> localParamsServiceMapping = new ConcurrentHashMap<>();
         ConcurrentHashMap<HJsonInvocationRequest, Integer> serviceParamCountMapping = new ConcurrentHashMap<>();
         ConcurrentHashMap<String, Object> parasmKeyValueMapping = new ConcurrentHashMap<>();
         CopyOnWriteArrayList<HJsonInvocationResponse> reList = new CopyOnWriteArrayList<>();
-// 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
+        // 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
         CountDownLatch cd = new CountDownLatch(invocationList.size());
         for (HJsonInvocationRequest request : invocationList) {
             allocateService(request,localParamsServiceMapping,serviceParamCountMapping,parasmKeyValueMapping,reList,cd);
         }
         try {
-            boolean await = cd.await(500, TimeUnit.MILLISECONDS);
+            cd.await(500, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
-//        List<HJsonInvocationResponse> res = responseList.get();
-
         return reList;
     }
 
     public interface TaskService {
-
+        /**
+         * 替换参数
+         * @param key -
+         * @param value -
+         */
         void replaceParam(String key, Object value);
 
+        /**
+         * 是否同步/异步
+         * @return -
+         */
         boolean sync();
     }
-
-    public static void main(String[] args) {
-        Mono m = Mono.just("asd");
-        Object block = m.block();
-        System.out.println("finish");
-    }
-    public HJsonInvoker() {
-//        localDynamicParamsMapping = new ThreadLocal<>();
-//
-//        serviceDynamicRequestParamCount = new ThreadLocal<>();
-//
-//        paramsSet = new ThreadLocal<>();
-//
-//        responseList = new ThreadLocal<>();
-//
-//        cyclicBarrierThreadLocal = new ThreadLocal<>();
-
-    }
-
 
 
     private Mono allocateService(HJsonInvocationRequest taskService,
@@ -138,14 +110,12 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                     }
 
                 }
-                ;
             }
             if (flag) {
                 return null;
             }
         }
         // 扫描request是否含有 #{} 这种参数，有的话需要放在另外一个地方等待唤醒
-//        CountDownLatch cd = cyclicBarrierThreadLocal.get();
         Mono<byte[]> responseMono = capaRpcClient.invokeMethod(
                 taskService.getAppId(),
                 taskService.getMethod(),
@@ -153,8 +123,6 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                 HttpExtension.POST,
                 taskService.getMetadata(),
                 TypeRef.BYTE_ARRAY);
-
-//        responseMono = Mono.create((s)->{});
 
         if (taskService.sync()) {
 
