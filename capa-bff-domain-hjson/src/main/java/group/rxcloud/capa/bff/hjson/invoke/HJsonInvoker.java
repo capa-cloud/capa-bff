@@ -34,7 +34,7 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
     private CapaRpcClient capaRpcClient;
 
     @Override
-    public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) throws RuntimeException {
+    public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) throws Exception {
         log.info(String.format("title: invoke start  invocationList: %s",JSONObject.toJSONString(invocationList)));
         if (invocationList != null && invocationList.size() >= 10) {
             return new ArrayList<>();
@@ -124,8 +124,9 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                 taskService.getMetadata(),
                 TypeRef.BYTE_ARRAY);
 
+        log.info("[HJsonInvoker] before judge is sync");
         if (taskService.sync()) {
-
+            log.info("[HJsonInvoker] before responseDataFormat is sync");
             JSONObject response = null;
             try {
                 byte[] bytes = responseMono.block();
@@ -137,7 +138,9 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
 
             reList.add(new HJsonInvocationResponse(taskService, response));
             Map<String, String> responseDataFormat = taskService.getResponseDataFormat();
+            log.info("[HJsonInvoker] before responseDataFormat");
             if (responseDataFormat!=null && !responseDataFormat.isEmpty()){
+                log.info("[HJsonInvoker] before responseDataFormat is not empty");
                 Set<String> strings = responseDataFormat.keySet();
                 for (String path:strings){
                     String pathMappingName = responseDataFormat.get(path);
@@ -182,6 +185,7 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
             }
             cd.countDown();
         } else {
+            log.info("[HJsonInvoker] before responseDataFormat is not sync");
             responseMono.doOnSuccess((bytes) -> {
                 JSONObject response = generateResponseObj(bytes);
 
@@ -201,7 +205,7 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                             nickName = pathMappingName;
                         }
                         if (StringUtils.isEmpty(nickName)){
-                            System.out.println(JSONObject.toJSONString(taskService)+"resp 中 " +path +"没有别名");
+                            log.error(JSONObject.toJSONString(taskService)+"resp 中 " +path +"没有别名");
                             nickName = path;
                         }
                         // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface Invoke<InvocationReq extends InvocationRequest, InvocationResp extends InvocationResponse> {
 
-    List<InvocationResp> invoke(List<InvocationReq> invocationList, Context context) throws RuntimeException;
+    List<InvocationResp> invoke(List<InvocationReq> invocationList, Context context) throws Exception;
 }

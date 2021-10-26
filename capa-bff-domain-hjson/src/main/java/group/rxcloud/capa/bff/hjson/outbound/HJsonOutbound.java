@@ -10,12 +10,14 @@ import group.rxcloud.capa.bff.hjson.json.JsonValueMapper;
 import group.rxcloud.capa.bff.outbound.Outbound;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class HJsonOutbound implements Outbound<
         JSONObject,
         HJsonInvocationRequest,
@@ -41,6 +43,7 @@ public class HJsonOutbound implements Outbound<
     public JSONObject outbound(List<HJsonInvocationRequest> hJsonInvocationRequests,
                                List<HJsonInvocationResponse> hJsonInvocationResponses,
                                Context context) {
+        log.info("[HJsonOutbound] start outbound");
         // 成功的Map：有响应体Response
         Map<String, HJsonMappingEntity> successEntityMap = new ConcurrentHashMap<>();
         // 失败的Map：只有Request，没有Response
@@ -64,6 +67,7 @@ public class HJsonOutbound implements Outbound<
         JSONObject response = new JSONObject();
         response.put("body", responseJsonObject);
         response.put("errors", failureResponseJsonArray);
+        log.info("[HJsonOutbound] end outbound");
         return response;
     }
 

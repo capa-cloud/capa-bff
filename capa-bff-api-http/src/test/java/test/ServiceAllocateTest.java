@@ -26,7 +26,7 @@ public class ServiceAllocateTest {
     private HJsonInvoker serviceAllocate;
 
     @Test
-    public void test(){
+    public void test() throws Exception{
         HJsonInvocationRequest re = new HJsonInvocationRequest();
         JSONObject json = new JSONObject();
         json.put("name","张三");

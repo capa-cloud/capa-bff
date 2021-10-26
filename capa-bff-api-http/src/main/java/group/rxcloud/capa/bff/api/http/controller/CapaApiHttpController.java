@@ -46,6 +46,7 @@ public class CapaApiHttpController {
 
             return outbound.toJSONString();
         } catch (Exception e) {
+            System.out.printf("capabff.exception : " + e.getMessage());
             JSONObject exception = new JSONObject();
             exception.put("msg", e.getMessage());
             exception.put("code", "300");
