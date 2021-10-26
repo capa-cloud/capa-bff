@@ -178,13 +178,13 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                     }
                     if (StringUtils.isEmpty(nickName)){
                         System.out.println(JSONObject.toJSONString(taskService)+"resp 中 " +path +"没有别名");
-                        continue;
+                        nickName = path;
                     }
                     // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
                     nickName = nickName==null?"":nickName;
                     obj = obj==null?new JSONObject():obj;
                     parasmKeyValueMapping.put(nickName,obj);
-
+                    JsonValueMapper.replaceValueByRealPath(response,path,obj);
                     List<HJsonInvocationRequest> listTmp = localParamsServiceMapping.get(nickName);
                     localParamsServiceMapping.remove(nickName);
                     if (!CollectionUtils.isEmpty(listTmp)){
@@ -213,14 +213,25 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                 if (responseDataFormat!=null && !responseDataFormat.isEmpty()){
                     Set<String> strings = responseDataFormat.keySet();
                     for (String path:strings){
-                        String nickName = responseDataFormat.get(path);
+                        String pathMappingName = responseDataFormat.get(path);
+                        String nickName = "";
                         // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
                         Object obj = JsonValueMapper.findValueByPointPath(response, path);
-                        if (obj==null || nickName==null){
-                            continue;
+                        if (pathMappingName.contains("#{")){
+                            nickName = pathMappingName.substring(pathMappingName.lastIndexOf("}")+1);
+                            obj = InnerMethodUtil.runMethodAsStringBeforeConvert(pathMappingName,obj);
+                        }else {
+                            nickName = pathMappingName;
                         }
+                        if (StringUtils.isEmpty(nickName)){
+                            System.out.println(JSONObject.toJSONString(taskService)+"resp 中 " +path +"没有别名");
+                            nickName = path;
+                        }
+                        // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
+                        nickName = nickName==null?"":nickName;
+                        obj = obj==null?new JSONObject():obj;
                         parasmKeyValueMapping.put(nickName,obj);
-
+                        JsonValueMapper.replaceValueByRealPath(response,path,obj);
                         List<HJsonInvocationRequest> listTmp = localParamsServiceMapping.get(nickName);
                         localParamsServiceMapping.remove(nickName);
                         if (!CollectionUtils.isEmpty(listTmp)){

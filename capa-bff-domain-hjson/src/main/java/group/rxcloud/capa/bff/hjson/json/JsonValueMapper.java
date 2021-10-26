@@ -2,6 +2,7 @@ package group.rxcloud.capa.bff.hjson.json;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -165,5 +166,39 @@ public class JsonValueMapper {
 
         assert Objects.equals(_int, 1);
         assert Objects.equals(_str, "2");
+    }
+
+
+
+
+    public static void replaceValueByRealPath(JSONObject response, String path, Object obj) {
+        if (path==null){
+            return;
+        }
+        String[] split = path.split("\\.");
+        if (split.length==0){
+            return;
+        }
+        int length = split.length;
+        JSONObject pre = null;
+        JSONObject next = response;
+        String finalPath = "";
+        for (int i =0;i<length;i++){
+            finalPath = split[i];
+            Object tmp = null;
+            if ( (tmp = next.get(split[i]))!=null && tmp instanceof JSONObject){
+                pre = next;
+                next = next.getJSONObject(split[i]);
+
+            }else {
+                pre = next;
+                break;
+            }
+
+        }
+
+        if (pre!=null && !StringUtils.isEmpty(finalPath)){
+            pre.put(finalPath,obj);
+        }
     }
 }
