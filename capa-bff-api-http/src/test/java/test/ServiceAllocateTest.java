@@ -34,10 +34,13 @@ public class ServiceAllocateTest {
         re.setData(json);
         re.setAppId("110");
         re.setMethod("say");
-        Map<String, Object> requireMap = new HashMap<>();
-        requireMap.put("name","student.name");
-        re.setRequiredParams(requireMap);
+//        Map<String, Object> requireMap = new HashMap<>();
+//        requireMap.put("name","student.name");
+//        re.setRequiredParams(requireMap);
+        Map<String, String> responseMap = new HashMap<>();
 
+        responseMap.put("name.as","#{base64}test.name");
+        re.setResponseDataFormat(responseMap);
         System.out.println("request"+JSONObject.toJSONString(re));
 
         List<HJsonInvocationRequest> list = Collections.singletonList(re);

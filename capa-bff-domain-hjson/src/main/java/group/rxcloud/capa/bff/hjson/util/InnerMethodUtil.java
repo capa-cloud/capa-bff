@@ -47,11 +47,11 @@ public class InnerMethodUtil {
     }
     static {
         methodMap = new HashMap<>();
-        methodMap.put("Base64",(bytes)->{
+        methodMap.put("base64",(bytes)->{
             return Base64.getEncoder().encode(bytes);
         });
 
-        methodMap.put("ToString",(bytes)->{
+        methodMap.put("tostring",(bytes)->{
             return bytes;
         });
     }
@@ -62,7 +62,7 @@ public class InnerMethodUtil {
             return "";
         }
         methodName = methodName.substring(methodName.indexOf("#{")+2,methodName.indexOf("}"));
-        if ( methodMap.get(methodName)==null){
+        if ( methodMap.get(methodName.toLowerCase())==null){
             return JSONObject.toJSONString(target);
         }
         byte[] bytes = JSONObject.toJSONString(target).getBytes(StandardCharsets.UTF_8);
