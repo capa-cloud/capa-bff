@@ -13,24 +13,6 @@ import java.util.*;
  * @date 2021/10/25
  */
 public class GraphUtil {
-    public static void main(String[] args) {
-        List<HJsonInvocationRequest> list = new ArrayList<>();
-        HJsonInvocationRequest service01 = new HJsonInvocationRequest();
-        service01.setAppId("test01");
-        Map<String, Object> map01 = new HashMap<>();
-        map01.put("a.name",null);
-
-        Map<String, Object> map02 = new HashMap<>();
-        map02.put("b.name",null);
-        service01.setRequiredParams(map01);
-        Map<String, String> responseMap01 = new HashMap<>();
-        responseMap01.put("name","a.name");
-        service01.setResponseDataFormat(responseMap01);
-        list.add(service01);
-
-        GraphUtil g = new GraphUtil(list);
-        g.find();
-    }
 
     /**
      * node集合
