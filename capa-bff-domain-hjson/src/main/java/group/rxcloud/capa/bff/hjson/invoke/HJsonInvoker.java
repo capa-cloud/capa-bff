@@ -187,7 +187,7 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
             cd.countDown();
         } else {
             log.info("[HJsonInvoker] before responseDataFormat is not sync");
-            responseMono.doOnSuccess((bytes) -> {
+            responseMono.subscribe((bytes) -> {
                 JSONObject response = generateResponseObj(bytes);
                 log.info("invoke remote service finish ,response:"+JSONObject.toJSONString(response));
                 reList.add(new HJsonInvocationResponse(taskService, response));
