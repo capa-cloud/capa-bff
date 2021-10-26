@@ -237,6 +237,8 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                             nickName = path;
                         }
                         // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
+                        // todo update nickname
+                        responseDataFormat.put(path,nickName);
                         nickName = nickName==null?"":nickName;
                         obj = obj==null?new JSONObject():obj;
                         parasmKeyValueMapping.put(nickName,obj);
