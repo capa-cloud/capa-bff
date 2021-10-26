@@ -2,30 +2,29 @@
 <template>
   <div class="box-shadow">
     <el-row>
-      <template v-for="(item,index) in app.resultList">
-        <el-button @click="showRequest(item.info)">{{item.name}}</el-button>
-      </template>
-    </el-row>
-    <el-row>
       <el-col :span="12">
+        <el-row>
+          <template v-for="(item,index) in app.resultList">
+            <el-button @click="showRequest(item.info)">{{item.name}}</el-button>
+          </template>
+        </el-row>
         <div class="grid-content bg-purple">
-          <div class="input-box" style="display: block;width: 100%;height:640px;position: relative">
+          <div class="input-box" style="display: block;width: 100%;height:740px;position: relative">
             <el-input
                 type="textarea"
-                :rows="30"
+                :rows="36"
                 placeholder="请输入请求内容"
                 v-model="app.input"
             >
             </el-input>
-            <!--            <el-button style="position: absolute;right:0" @click="jsonStr">JSON格式化</el-button>-->
           </div>
         </div>
       </el-col>
       <el-col :span="2" style="text-align: center">
         <el-button style="margin-top: 100px;" type="primary" size="medium" @click="requestHttp">请求</el-button>
       </el-col>
-      <el-col :span="10" style="margin-top: -10px;">
-        <div class="box" style="height: 640px;background: #eee;padding:20px;">
+      <el-col :span="10" style="margin-top: 70px;">
+        <div class="box" style="height: 740px;background: #eee;padding:20px;">
           <pre>{{app.output}}</pre>
         </div>
       </el-col>
@@ -60,7 +59,7 @@ export default {
         + '                        "uid":  "wwwwww"' + '\n'
         + '                },' + '\n'
         + '                response:  {' + '\n'
-        + '                        "ResponseStatus.Ack":  "user.forawegag"' + '\n'
+        + '                        "ResponseStatus.Ack":  "user.jdjdjdjdj"' + '\n'
         + '                }' + '\n'
         + '  )' + '\n'
         + '        ]' + '\n'
@@ -150,6 +149,108 @@ export default {
         + '        )' + '\n'
         + '      ]' + '\n'
         + '}' + '\n'
+    var simple5 = '{' + '\n'
+        + '        "20392.imageService":  [' + '\n'
+        + '                "getImageInfo":(' + '\n'
+        + '                    request:  {' + '\n'
+        + '                        "imageId":  "${image.id}"' + '\n'
+        + '                },' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "imageInfo.imageId":  "${image.id}"' + '\n'
+        + '                }' + '\n'
+        + '  )' + '\n'
+        + '        ]' + '\n'
+        + '}' + '\n';
+    var simple6 = '{' + '\n'
+        + '        "20173.userService":  [' + '\n'
+        + '            "getUserInfo":(' + '\n'
+        + '                    request:  {' + '\n'
+        + '                        "imageId":  "${d.field1}"' + '\n'
+        + '                },' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "userInfo.name":  "b.field"' + '\n'
+        + '                }' + '\n'
+        + '  			)' + '\n'
+        + '        ],' + '\n'
+        + '        "22423.accountService":  [' + '\n'
+        + '            "getUserInfo":(' + '\n'
+        + '                    request:  {' + '\n'
+        + '                        "accountId":  "${b.field}"' + '\n'
+        + '                },' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "accountInfo.id":  "c.field"' + '\n'
+        + '                }' + '\n'
+        + '			)' + '\n'
+        + '        ],' + '\n'
+        + '        "11933.articleService":  [' + '\n'
+        + '            "getArticleInfo":(' + '\n'
+        + '                request:  {' + '\n'
+        + '                        "articleId":  "${c.field}"' + '\n'
+        + '                },' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "articleInfo.id":  "d.field1",' + '\n'
+        + '                        "articleInfo.name":  "d.field2"' + '\n'
+        + '                }' + '\n'
+        + '			)' + '\n'
+        + '        ],' + '\n'
+        + '        "83920.liveService":  [' + '\n'
+        + '            "getLiveInfo":(' + '\n'
+        + '                request:  {' + '\n'
+        + '                        "liveInfo.id":  "${d.field1}",' + '\n'
+        + '                        "liveInfo.liveUserId":  "${d.field2}"' + '\n'
+        + '                },' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "liveResult.liveId" : "e.field" ' + '\n'
+        + '                }' + '\n'
+        + '			)' + '\n'
+        + '        ],' + '\n'
+        + '        "18394.dintctServcide" : [' + '\n'
+        + '	        "getOtherInfo":(' + '\n'
+        + '                request:  {' + '\n'
+        + '                        "other.id":  "${e.field}"' + '\n'
+        + '                },' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "otherInfo.result" : "f.field" ' + '\n'
+        + '                }' + '\n'
+        + '			)' + '\n'
+        + '        ]' + '\n'
+        + '}' + '\n';
+    var simple7 = '{' + '\n'
+        + '        "20725.gscontentcenterservice":  [' + '\n'
+        + '            "getUserInfo":(' + '\n'
+        + '                    request:  {' + '\n'
+        + '                        "uid":  "wwwwww"' + '\n'
+        + '                },' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "userInfo.identityTypeName":  "#{base64}userInfo.identityTypeName"' + '\n'
+        + '                }' + '\n'
+        + '			)' + '\n'
+        + '        ]' + '\n'
+        + '}' + '\n'
+    var simple8 = '{' + '\n'
+        + '        "20725.gscontentcenterservice":  [' + '\n'
+        + '            "getUserInfo":(' + '\n'
+        + '                    request:  {' + '\n'
+        + '                        "uid":  "wwwwww"' + '\n'
+        + '                },' + '\n'
+        + '                response:  {' + '\n'
+        + '                        "userInfo.userId":  "#{toString}userInfo.userId"' + '\n'
+        + '                }' + '\n'
+        + '			)' + '\n'
+        + '        ]' + '\n'
+        + '}' + '\n';
+    var simple9 = '{ ' + '\n'
+        + '        "20725.gscontentcenterservice":  [ ' + '\n'
+        + '            "getUserInfo":( ' + '\n'
+        + '                    request:  { ' + '\n'
+        + '                        "uid":  "wwwwww" ' + '\n'
+        + '                }, ' + '\n'
+        + '                response:  { ' + '\n'
+        + '                        "*" : "resultInfo" ' + '\n'
+        + '                } ' + '\n'
+        + '	    ) ' + '\n'
+        + '        ] ' + '\n'
+        + '} ' + '\n'
     this.app.resultList.push({
       name : '简单单个请求',
       info : simple
@@ -166,7 +267,26 @@ export default {
       name : '非常复杂请求',
       info : simple4
     });
-
+    this.app.resultList.push({
+      name : '简单循环依赖请求检查',
+      info : simple5
+    });
+    this.app.resultList.push({
+      name : '复杂循环依赖请求检查',
+      info : simple6
+    });
+    this.app.resultList.push({
+      name : 'function(#encode)返回值',
+      info : simple7
+    });
+    this.app.resultList.push({
+      name : 'function(#toString)返回值',
+      info : simple8
+    });
+    this.app.resultList.push({
+      name : '返回全部数据(*)',
+      info : simple9
+    });
   },
   methods : {
     jsonStr() {
