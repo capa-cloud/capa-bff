@@ -42,7 +42,7 @@ public class CustomerJsonParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'{'", "','", "'}'", "':'", "'['", "']'", "'('", "'request'", "'requestHeader'", 
+			null, "'{'", "','", "'}'", "':'", "'['", "']'", "'('", "'request'", "'metaData'", 
 			"'response'", "')'", "'true'", "'false'", "'null'"
 		};
 	}

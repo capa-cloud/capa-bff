@@ -27,7 +27,7 @@ requestId
     ;
 
 requestValue
-    : '(' 'request' ':' requestJson ',' ('requestHeader' ':' requestHeaderObj ',')? 'response' ':' responseBody ')'
+    : '(' 'request' ':' requestJson ',' ('metaData' ':' requestHeaderObj ',')? 'response' ':' responseBody ')'
     ;
 
 requestHeaderObj
