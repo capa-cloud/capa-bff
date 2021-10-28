@@ -112,7 +112,7 @@ public class JsonValueMapper {
 
 
     public static void replaceValueByRealPath(JSONObject response, String path, Object obj) {
-        if (path==null){
+        if (path==null|| "*".equals(path)){
             return;
         }
         String[] split = path.split("\\.");
