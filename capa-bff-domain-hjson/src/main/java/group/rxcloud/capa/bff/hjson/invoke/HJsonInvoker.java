@@ -223,7 +223,7 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                                 Map<String, Object> pMap = new HashMap<>();
                                 pMap.put(nickName,obj);
                                 re.setData(JsonValueMapper.replaceValuesByParameters(re.getData(),pMap));
-                                serviceParamCountMapping.put(re,serviceParamCountMapping.get(taskService)-1);
+                                serviceParamCountMapping.put(re,serviceParamCountMapping.get(re)-1);
                                 if (serviceParamCountMapping.get(re)==0){
                                     allocateService(re,localParamsServiceMapping,serviceParamCountMapping,parasmKeyValueMapping,reList,cd);
                                 }
