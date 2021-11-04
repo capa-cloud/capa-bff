@@ -1,4 +1,6 @@
-# 零成本BFF解决方案
+# 零成本BFF解决方案 - CapaBFF
+
+> 携程集团 2021 Hackthon大赛 金奖项目
 
 ## Capa Bff
 
