@@ -2,15 +2,12 @@ package test;
 
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.api.http.SpringBootCapaApiApplication;
-import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.hjson.invoke.HJsonInvoker;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
 import org.junit.jupiter.api.Test;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;

@@ -1,0 +1,33 @@
+
+name: "Build and Test"
+on: [push, pull_request]
+
+jobs:
+  build-source:
+    name: "Build Source Code"
+    runs-on: ubuntu-latest
+    env:
+      JDK_VER: 11
+    steps:
+      - name: "Checkout the source code"
+        uses: actions/checkout@v2
+      - name: "Set up JDK 11"
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: "Build capa-bff"
+        run:
+          mvn clean && mvn package
+      - name: docker login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: docker build capa-example-dependency
+        run: |
+          docker build ./capa-bff-example-dependency -t wangjiefourth/capa-example-dependency
+      - name: docker push
+        run: |
+          docker push wangjiefourth/capa-example-dependency
