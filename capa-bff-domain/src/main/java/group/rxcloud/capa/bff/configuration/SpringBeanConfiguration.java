@@ -61,11 +61,13 @@ public class SpringBeanConfiguration {
 
         @Override
         public <T> Mono<T> invokeMethod(String appId, String methodName, Object data, HttpExtension httpExtension, Map<String, String> metadata, TypeRef<T> type) {
+            // todo: 开关形式
             // generate service mesh http url
-            final String serviceMeshHttpUrl = CTRIP_SERVICE_MESH_TEMPLATE
-                    .replace("{serviceId}", appId.toLowerCase())
-                    .replace("{operation}", methodName.toLowerCase());
+//            String serviceMeshHttpUrl = CTRIP_SERVICE_MESH_TEMPLATE
+//                    .replace("{serviceId}", appId.toLowerCase())
+//                    .replace("{operation}", methodName.toLowerCase());
 
+            String serviceMeshHttpUrl = appId + methodName;
             // 目前只有HJson一种实现，所以先写死成JSONObject
             if (data instanceof JSONObject) {
                 String json = ((JSONObject) data).toJSONString();

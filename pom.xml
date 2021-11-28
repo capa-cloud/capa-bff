@@ -9,12 +9,11 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
-        <module>capa-bff-api-grpc</module>
         <module>capa-bff-api-http</module>
         <module>capa-bff-domain</module>
-        <module>capa-bff-domain-graphql</module>
         <module>capa-bff-domain-hjson</module>
         <module>capa-bff-web</module>
+        <module>capa-bff-example-dependency</module>
     </modules>
 
     <properties>
@@ -24,6 +23,8 @@
         <file.encoding>UTF-8</file.encoding>
         <maven.version>3.8.1</maven.version>
         <spring.boot.version>2.5.5</spring.boot.version>
+        <fastjson.version>1.2.78</fastjson.version>
+        <antlr.version>4.9.2</antlr.version>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
 
@@ -44,11 +45,7 @@
                 <artifactId>capa-bff-domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>group.rxcloud</groupId>
-                <artifactId>capa-bff-domain-graphql</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>group.rxcloud</groupId>
                 <artifactId>capa-bff-domain-hjson</artifactId>
@@ -96,7 +93,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.78</version>
+                <version>${fastjson.version}</version>
             </dependency>
 
             <dependency>
@@ -105,16 +102,11 @@
                 <version>${spring.boot.version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>io.projectreactor</groupId>
-                <artifactId>reactor-test</artifactId>
-                <version>3.4.10</version>
-                <scope>test</scope>
-          </dependency>
+
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4</artifactId>
-                <version>4.9.2</version>
+                <version>${antlr.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -145,6 +137,24 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring.boot.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>3.1.12</version>
+                    <dependencies>
+                        <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
+                        <dependency>
+                            <groupId>com.github.spotbugs</groupId>
+                            <artifactId>spotbugs</artifactId>
+                            <version>4.0.0</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.5</version>
                 </plugin>
             </plugins>
         </pluginManagement>

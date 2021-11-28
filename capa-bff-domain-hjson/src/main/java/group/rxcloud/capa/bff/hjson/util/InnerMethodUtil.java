@@ -16,13 +16,6 @@ public class InnerMethodUtil {
     private static final HashMap<String, InnerInvokeMethod> methodMap;
 
     public static void main(String[] args) {
-//        JSONObject json = new JSONObject();
-//        json.put("name","lsadkjaskd");
-//        String base64 = runMethodAsStringBeforeConvert("#{Base64} user.code", json);
-//        System.out.println(base64);
-//        System.out.println(new String(Base64.getDecoder().decode(base64)));
-
-
         JSONObject j = new JSONObject();
         j.put("name", "zhangsan");
         j.put("age", 12);
@@ -45,13 +38,8 @@ public class InnerMethodUtil {
 
     static {
         methodMap = new HashMap<>();
-        methodMap.put("base64", (bytes) -> {
-            return Base64.getEncoder().encode(bytes);
-        });
-
-        methodMap.put("tostring", (bytes) -> {
-            return bytes;
-        });
+        methodMap.put("base64", (bytes) -> Base64.getEncoder().encode(bytes));
+        methodMap.put("tostring", (bytes) -> bytes);
     }
 
     public static String runMethodAsStringBeforeConvert(String methodName, Object target) {
@@ -64,7 +52,7 @@ public class InnerMethodUtil {
             return JSONObject.toJSONString(target);
         }
         byte[] bytes = JSONObject.toJSONString(target).getBytes(StandardCharsets.UTF_8);
-        return new String(methodMap.get(methodName.toLowerCase()).run(bytes));
+        return new String(methodMap.get(methodName.toLowerCase()).run(bytes), StandardCharsets.UTF_8);
     }
 
 

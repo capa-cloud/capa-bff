@@ -14,6 +14,7 @@ import java.util.Objects;
  */
 public class JsonValueMapperTest {
 
+    @Test
     public void test_replaceValuesByParameters() {
         JSONObject c = new JSONObject();
         c.put("int", "${user.id}");
@@ -38,7 +39,7 @@ public class JsonValueMapperTest {
         System.out.println(_int);
         System.out.println(_str);
 
-        assert Objects.equals(_int, 1);
+        assert Objects.equals(_int, "1");
         assert Objects.equals(_str, "2");
     }
 
