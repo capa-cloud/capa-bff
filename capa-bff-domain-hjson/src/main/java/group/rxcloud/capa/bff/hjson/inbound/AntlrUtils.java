@@ -1,6 +1,6 @@
 package group.rxcloud.capa.bff.hjson.inbound;
 
-import group.rxcloud.capa.bff.hjson.inbound.parse.CustomerJsonParser;
+import group.rxcloud.capa.bff.hjson.antlr4.CustomerJsonParser;
 import org.antlr.v4.runtime.RuleContext;
 
 public class AntlrUtils {

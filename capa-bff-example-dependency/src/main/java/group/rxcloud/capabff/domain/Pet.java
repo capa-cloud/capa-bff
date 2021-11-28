@@ -26,4 +26,8 @@ public class Pet {
     public void setName(String name) {
         this.name = name;
     }
+
+    public static Pet build(Long id) {
+        return new Pet(id, "test" + id);
+    }
 }

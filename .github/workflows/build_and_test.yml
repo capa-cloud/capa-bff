@@ -29,4 +29,4 @@ jobs:
       - name: "build capa-bff"
         run: |
           docker run -d -p 8089:8080 --name=cpapa-bff-example-dependency wangjiefourth/capa-example-dependency:latest
-          mvn clean && mvn package
+          mvn clean && mvn verify

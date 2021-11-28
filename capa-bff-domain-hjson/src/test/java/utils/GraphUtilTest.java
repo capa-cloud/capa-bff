@@ -37,7 +37,7 @@ public class GraphUtilTest {
     public void hasCycle_test() throws Exception {
         List<HJsonInvocationRequest> list = new ArrayList<>();
 
-        HJsonInvocationRequest serviceA = getInvocationRequest("serviceA",  ImmutableMap.of("d.field1", ""), ImmutableMap.of("name", "b.field"));
+        HJsonInvocationRequest serviceA = getInvocationRequest("serviceA", ImmutableMap.of("d.field1", ""), ImmutableMap.of("name", "b.field"));
         HJsonInvocationRequest serviceB = getInvocationRequest("serviceB", ImmutableMap.of("b.field", ""), ImmutableMap.of("name", "c.field"));
         HJsonInvocationRequest serviceC = getInvocationRequest("serviceC", ImmutableMap.of("c.field", ""), ImmutableMap.of("name1", "d.field1", "name2", "d.field2"));
         HJsonInvocationRequest serviceD = getInvocationRequest("serviceD", ImmutableMap.of("c.field", "", "d.field1", "", "d.field2", ""), ImmutableMap.of("name1", "e.field"));
@@ -52,7 +52,7 @@ public class GraphUtilTest {
     }
 
     @Test
-    public void conflict_empty_test() throws Exception{
+    public void conflict_empty_test() throws Exception {
         try {
             HJsonInvocationRequest serviceW = getInvocationRequest("serviceW", ImmutableMap.of("w.field", ""), null);
             HJsonInvocationRequest serviceA = getInvocationRequest("serviceA", null, ImmutableMap.of("name", "b.field"));
@@ -60,7 +60,7 @@ public class GraphUtilTest {
             HJsonInvocationRequest serviceC = getInvocationRequest("serviceC", ImmutableMap.of("c.field", ""), ImmutableMap.of("name1", "d.field1", "name2", "d.field2"));
             HJsonInvocationRequest serviceD = getInvocationRequest("serviceD", ImmutableMap.of("c.field", "", "d.field1", "", "d.field2", ""), ImmutableMap.of("name1", "e.field"));
             HJsonInvocationRequest serviceE = getInvocationRequest("serviceE", ImmutableMap.of("e.field", ""), null);
-            GraphUtil g = new GraphUtil(Lists.newArrayList(serviceW,serviceA,serviceB,serviceC,serviceD,serviceE));
+            GraphUtil g = new GraphUtil(Lists.newArrayList(serviceW, serviceA, serviceB, serviceC, serviceD, serviceE));
             g.find();
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -68,7 +68,7 @@ public class GraphUtilTest {
     }
 
     @Test
-    public void empty_test() throws Exception{
+    public void empty_test() throws Exception {
         try {
             List<HJsonInvocationRequest> list = new ArrayList<>();
             HJsonInvocationRequest serviceA = getInvocationRequest("serviceA", ImmutableMap.of("b.field", ""), null);
@@ -81,7 +81,7 @@ public class GraphUtilTest {
     }
 
     @Test
-    public void hasCycle_myself_test() throws Exception{
+    public void hasCycle_myself_test() throws Exception {
         try {
             List<HJsonInvocationRequest> list = new ArrayList<>();
             HJsonInvocationRequest serviceA = getInvocationRequest("serviceA", ImmutableMap.of("a.name", ""), ImmutableMap.of("name", "a.name"));

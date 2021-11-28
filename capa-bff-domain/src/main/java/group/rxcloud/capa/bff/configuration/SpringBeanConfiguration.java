@@ -41,6 +41,7 @@ public class SpringBeanConfiguration {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .header("Content-Type", "application/json")
                     .build();
             return client.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray());
         }

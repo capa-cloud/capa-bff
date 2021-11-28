@@ -1,5 +1,16 @@
 lexer grammar CommonLexerRules;
 
+@lexer::header {
+package group.rxcloud.capa.bff.hjson.antlr4;
+
+import group.rxcloud.capa.bff.hjson.antlr4.CommonLexerRules;
+import group.rxcloud.capa.bff.hjson.antlr4.CustomerJsonBaseListener;
+import group.rxcloud.capa.bff.hjson.antlr4.CustomerJsonListener;
+import group.rxcloud.capa.bff.hjson.antlr4.CustomerJsonLexer;
+import group.rxcloud.capa.bff.hjson.antlr4.CustomerJsonParser;
+}
+
+
 STRING
    : '"' (ESC | SAFECODEPOINT)* '"'
    ;

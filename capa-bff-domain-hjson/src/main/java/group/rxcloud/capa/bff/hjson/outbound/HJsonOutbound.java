@@ -145,9 +145,8 @@ public class HJsonOutbound implements Outbound<
             if (entityMap.containsKey(key)) {
                 HJsonMappingEntity mappingEntity = entityMap.get(key);
                 mappingEntity.setResponseDataFormat(hJsonMappingEntity.getResponseDataFormat());
-            }
-            // 如果不存在响应体值，则视为失败
-            else {
+            } else {
+                // 如果不存在响应体值，则视为失败
                 failureEntityMap.putIfAbsent(key, hJsonMappingEntity);
             }
         }
@@ -197,9 +196,8 @@ public class HJsonOutbound implements Outbound<
                 // 当前的路径节点key
                 final String jsonKey = valueByPointPath[0];
                 responseBody.put(jsonKey, aliasValue);
-            }
-            // 有多个路径：循环遍历，构建层级关系
-            else {
+            } else {
+                // 有多个路径：循环遍历，构建层级关系
                 // 当前遍历时的指针
                 JSONObject point = null;
                 // 遍历扫描JSON对象
@@ -212,34 +210,27 @@ public class HJsonOutbound implements Outbound<
                         // 如果已经存在，更新指针为已存在节点
                         if (responseBody.get(jsonKey) != null) {
                             point = responseBody.getJSONObject(jsonKey);
-                        }
-                        // 如果不存在，在根节点创建一个新的node，并赋值给指针
-                        else {
+                        } else {
+                            // 如果不存在，在根节点创建一个新的node，并赋值给指针
                             point = new JSONObject();
                             responseBody.put(jsonKey, point);
                         }
-                    }
-
-                    // 此时，该次遍历的根节点已经指向point指针，不需要再向根节点进行绑定
-
-                    // 中间路径：建立不存在的K:V关系
-                    else if (i < valueByPointPath.length - 1) {
+                    } else if (i < valueByPointPath.length - 1) {
+                        // 此时，该次遍历的根节点已经指向point指针，不需要再向根节点进行绑定
+                        // 中间路径：建立不存在的K:V关系
                         // 如果已经存在该路径
                         if (point.get(jsonKey) != null) {
                             // 如果已经存在，更新指针
                             point = point.getJSONObject(jsonKey);
-                        }
-                        // 如果不存在该路径，将该路径添加为JSONObject节点
-                        else {
+                        } else {
+                            // 如果不存在该路径，将该路径添加为JSONObject节点
                             JSONObject node = new JSONObject();
                             point.put(jsonKey, node);
                             // 创建新节点，更新指针
                             point = node;
                         }
-                    }
-
-                    // 终端路径：将值放入JSONObject
-                    else {
+                    } else {
+                        // 终端路径：将值放入JSONObject
                         point.put(jsonKey, aliasValue);
                     }
                 }

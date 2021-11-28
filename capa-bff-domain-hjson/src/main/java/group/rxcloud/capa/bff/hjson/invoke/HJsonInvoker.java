@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -35,8 +36,11 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
 
     @Override
     public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) throws Exception {
+        if (invocationList == null || context == null) {
+            return new ArrayList<>();
+        }
         log.info(String.format("title: invoke start  invocationList: %s", JSONObject.toJSONString(invocationList)));
-        if (invocationList != null && invocationList.size() >= 10) {
+        if (invocationList.size() >= 10) {
             return new ArrayList<>();
         }
         new GraphUtil(invocationList).find();
@@ -133,6 +137,9 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
             JSONObject response = null;
             try {
                 byte[] bytes = responseMono.block();
+                if (bytes == null) {
+                    return null;
+                }
                 response = generateResponseObj(bytes);
             } catch (Exception e) {
                 log.error(String.format("title: invoke err  taskService: %s", JSONObject.toJSONString(taskService)), e);
@@ -144,8 +151,9 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
             log.info("[HJsonInvoker] before responseDataFormat");
             if (responseDataFormat != null && !responseDataFormat.isEmpty()) {
                 log.info("[HJsonInvoker] before responseDataFormat is not empty");
-                Set<String> strings = responseDataFormat.keySet();
-                for (String path : strings) {
+                Set<Map.Entry<String, String>> entrySet = responseDataFormat.entrySet();
+                for (Map.Entry<String, String> pathItem : entrySet) {
+                    String path = pathItem.getKey();
                     String pathMappingName = responseDataFormat.get(path);
                     String nickName = "";
                     boolean method = false;
@@ -196,7 +204,9 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
                 Map<String, String> responseDataFormat = taskService.getResponseDataFormat();
                 if (responseDataFormat != null && !responseDataFormat.isEmpty()) {
                     Set<String> strings = responseDataFormat.keySet();
-                    for (String path : strings) {
+                    Set<Map.Entry<String, String>> entrySet = responseDataFormat.entrySet();
+                    for (Map.Entry<String, String> pathItem : entrySet) {
+                        String path = pathItem.getKey();
                         String pathMappingName = responseDataFormat.get(path);
                         String nickName = "";
                         // 根据路径以及response对象，获取其value，然后将别名以及value映射放入paramsSet中
@@ -253,9 +263,8 @@ public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonI
     }
 
     private JSONObject generateResponseObj(byte[] block) {
-        String responseStr = new String(block);
-        JSONObject response = JSON.parseObject(responseStr);
-        return response;
+        String responseStr = new String(block, StandardCharsets.UTF_8);
+        return JSON.parseObject(responseStr);
     }
 
 

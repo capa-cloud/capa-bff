@@ -1,5 +1,15 @@
 grammar CustomerJson;
 
+@parser::header {
+package group.rxcloud.capa.bff.hjson.antlr4;
+
+import group.rxcloud.capa.bff.hjson.antlr4.CommonLexerRules;
+import group.rxcloud.capa.bff.hjson.antlr4.CustomerJsonBaseListener;
+import group.rxcloud.capa.bff.hjson.antlr4.CustomerJsonListener;
+import group.rxcloud.capa.bff.hjson.antlr4.CustomerJsonLexer;
+import group.rxcloud.capa.bff.hjson.antlr4.CustomerJsonParser;
+}
+
 import CommonLexerRules;
 
 customerJson
