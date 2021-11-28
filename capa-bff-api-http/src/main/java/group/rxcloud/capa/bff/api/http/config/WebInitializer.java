@@ -1,4 +1,4 @@
-package group.rxcloud.capa.bff.api.http;
+package group.rxcloud.capa.bff.api.http.config;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;

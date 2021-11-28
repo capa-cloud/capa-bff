@@ -15,18 +15,18 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: "Build capa-bff"
+      - name: "Build capa-bff-example-dependency"
         run:
-          mvn clean && mvn package
-      - name: docker login
+          mvn package -pl ./capa-bff-example-dependency
+      - name: "docker build and push"
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-      - name: docker build capa-example-dependency
-        run: |
           docker build ./capa-bff-example-dependency -t wangjiefourth/capa-example-dependency
-      - name: docker push
-        run: |
           docker push wangjiefourth/capa-example-dependency
+      - name: "build capa-bff"
+        run: |
+          docker run -d -p 8089:8080 --name=cpapa-bff-example-dependency wangjiefourth/capa-example-dependency:latest
+          mvn clean && mvn package

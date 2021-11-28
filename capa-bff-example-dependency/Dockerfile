@@ -5,7 +5,7 @@ WORKDIR /work
 
 COPY ./src/ /work/
 
-COPY target/capa-bff-example-dependency-0.0.1-SNAPSHOT.jar /app
+COPY target/capa-bff-example-dependency-0.0.1-SNAPSHOT.jar /work
 
 EXPOSE 8080
 
