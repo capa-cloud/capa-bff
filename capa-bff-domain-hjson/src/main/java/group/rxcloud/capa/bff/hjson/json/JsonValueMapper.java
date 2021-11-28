@@ -29,6 +29,10 @@ public class JsonValueMapper {
 
     /**
      * 使用Parameters{@code <别名，值>}中的值，替换JSONObject中的占位符
+     *
+     * @param jsonObject 原始的json对象
+     * @param parameters 需要替换的参数
+     * @return 替换成功后的json对象
      */
     public static JSONObject replaceValuesByParameters(JSONObject jsonObject, Map<String, Object> parameters) {
         if (jsonObject == null) {
@@ -75,7 +79,9 @@ public class JsonValueMapper {
     /**
      * 根据PointPath{a.b.c}路径格式，从JSONObject中获取指定的路径项的值
      *
-     * @return null when not found
+     * @param jsonObject json对象
+     * @param valuePath  要获取对象的路径
+     * @return 该对象的值
      */
     public static Object findValueByPointPath(JSONObject jsonObject, String valuePath) {
         if (jsonObject == null) {
@@ -98,9 +104,8 @@ public class JsonValueMapper {
             // 前N-1次遍历：获取JSON嵌套对象
             if (i < paths.length - 1) {
                 target = target.getJSONObject(path);
-            }
-            // 第N次遍历：获取具体值
-            else {
+            } else {
+                // 第N次遍历：获取具体值
                 object = target.get(path);
             }
             if (target == null) {
@@ -112,33 +117,33 @@ public class JsonValueMapper {
 
 
     public static void replaceValueByRealPath(JSONObject response, String path, Object obj) {
-        if (path==null|| "*".equals(path)){
+        if (path == null || "*".equals(path)) {
             return;
         }
         String[] split = path.split("\\.");
-        if (split.length==0){
+        if (split.length == 0) {
             return;
         }
         int length = split.length;
         JSONObject pre = null;
         JSONObject next = response;
         String finalPath = "";
-        for (int i =0;i<length;i++){
+        for (int i = 0; i < length; i++) {
             finalPath = split[i];
             Object tmp = null;
-            if ( (tmp = next.get(split[i]))!=null && tmp instanceof JSONObject){
+            if ((tmp = next.get(split[i])) != null && tmp instanceof JSONObject) {
                 pre = next;
                 next = next.getJSONObject(split[i]);
 
-            }else {
+            } else {
                 pre = next;
                 break;
             }
 
         }
 
-        if (!StringUtils.isEmpty(finalPath)){
-            pre.put(finalPath,obj);
+        if (!StringUtils.isEmpty(finalPath)) {
+            pre.put(finalPath, obj);
         }
     }
 }
