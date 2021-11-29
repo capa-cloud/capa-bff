@@ -7,15 +7,15 @@ import group.rxcloud.capa.rpc.CapaRpcClient;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
 import group.rxcloud.cloudruntimes.domain.core.invocation.InvokeMethodRequest;
 import group.rxcloud.cloudruntimes.utils.TypeRef;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-
+import javax.annotation.Resource;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -50,23 +50,13 @@ public class SpringBeanConfiguration {
     @Component
     public static class TempCapaRpcClient implements CapaRpcClient {
 
-        /**
-         * TODO 底层调用servicemesh
-         */
-        private static final String CTRIP_SERVICE_MESH_TEMPLATE = "http://{serviceId}.soa.mesh/{operation}";
-
-        @Autowired
+        @Resource
         private HttpInvokeClient httpInvokeClient;
 
         private final ObjectSerializer objectSerializer = new DefaultObjectSerializer();
 
         @Override
         public <T> Mono<T> invokeMethod(String appId, String methodName, Object data, HttpExtension httpExtension, Map<String, String> metadata, TypeRef<T> type) {
-            // todo: 开关形式
-            // generate service mesh http url
-//            String serviceMeshHttpUrl = CTRIP_SERVICE_MESH_TEMPLATE
-//                    .replace("{serviceId}", appId.toLowerCase())
-//                    .replace("{operation}", methodName.toLowerCase());
 
             String serviceMeshHttpUrl = appId + methodName;
             // 目前只有HJson一种实现，所以先写死成JSONObject
@@ -77,7 +67,7 @@ public class SpringBeanConfiguration {
                 CompletableFuture<HttpResponse<byte[]>> completableFuture = httpInvokeClient.send(serviceMeshHttpUrl, json);
                 CompletableFuture<T> byteFuture = completableFuture.thenApply(httpResponse -> {
                     final byte[] httpResponseBody = httpResponse.body();
-                    System.out.println("invokeMethod response:" + new String(httpResponseBody));
+                    System.out.println("invokeMethod response:" + new String(httpResponseBody, StandardCharsets.UTF_8));
                     try {
                         return objectSerializer.deserialize(httpResponseBody, type);
                     } catch (Exception e) {

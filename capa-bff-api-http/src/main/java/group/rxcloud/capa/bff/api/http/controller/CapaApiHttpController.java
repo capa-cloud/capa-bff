@@ -1,12 +1,12 @@
 package group.rxcloud.capa.bff.api.http.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import group.rxcloud.capa.bff.domain.DefaultContext;
-import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationRequest;
-import group.rxcloud.capa.bff.hjson.domain.HJsonInvocationResponse;
-import group.rxcloud.capa.bff.hjson.inbound.HJsonInbound;
-import group.rxcloud.capa.bff.hjson.invoke.HJsonInvoker;
-import group.rxcloud.capa.bff.hjson.outbound.HJsonOutbound;
+import group.rxcloud.capa.bff.domain.CapaContext;
+import group.rxcloud.capa.bff.domain.HJsonInvocationRequest;
+import group.rxcloud.capa.bff.domain.HJsonInvocationResponse;
+import group.rxcloud.capa.bff.inbound.HJsonInbound;
+import group.rxcloud.capa.bff.invoke.HJsonInvoker;
+import group.rxcloud.capa.bff.outbound.HJsonOutbound;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +35,7 @@ public class CapaApiHttpController {
     @RequestMapping(value = "/capabff")
     @ResponseBody
     public String bff(@RequestBody String request) {
-        DefaultContext context = new DefaultContext();
+        CapaContext context = new CapaContext();
 
         HJsonInbound hJsonInbound = new HJsonInbound();
         HJsonOutbound hJsonOutbound = new HJsonOutbound();
