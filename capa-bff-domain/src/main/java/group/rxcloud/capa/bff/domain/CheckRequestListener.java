@@ -1,9 +1,15 @@
 package group.rxcloud.capa.bff.domain;
 
-import java.util.Map;
 
 public interface CheckRequestListener {
 
-    void checkSelfRequestParam(Map<String, Object> resultMap);
+    /**
+     * 检查自身的request是否可以发送请求
+     */
+    void checkSelfRequestParam(CapaContext capaContext);
 
+    /**
+     * 发送请求
+     */
+    void sendRequest(CapaContext capaContext);
 }

@@ -49,16 +49,27 @@ public class HJsonInvocationRequest extends InvocationRequest<JSONObject> implem
     }
 
     @Override
-    public void checkSelfRequestParam(Map<String, Object> resultMap) {
-        if (isFinishRequest() || requiredParams == null || requiredParams.size() == 0
-                || resultMap == null || resultMap.size() == 0) {
+    public void checkSelfRequestParam(CapaContext capaContext) {
+        if (isFinishRequest() || requiredParams == null || requiredParams.size() == 0) {
             return;
         }
+        Map<String, Object> resultMap = capaContext.getResultMap();
 
         if (resultMap.keySet().stream().allMatch(resultMap::containsKey)) {
             // 这个请求可以变成前置请求了
             // 执行发送请求的逻辑
+            this.sendRequest(capaContext);
         }
+
+    }
+
+    @Override
+    public void sendRequest(CapaContext capaContext) {
+        // 发送请求，获取数据时；回调下面的方法
+        HJsonInvocationResponse response = null;
+        // 回调逻辑
+        this.finishRequest = true;
+        capaContext.requestSuccessFinish(response);
 
     }
 
