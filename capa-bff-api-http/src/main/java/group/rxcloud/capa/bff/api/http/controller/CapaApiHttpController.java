@@ -32,45 +32,22 @@ public class CapaApiHttpController {
         return "ok";
     }
 
-    @RequestMapping(value = "/capabff")
-    @ResponseBody
-    public String bff(@RequestBody String request) {
-        CapaContext context = new CapaContext();
-
-        HJsonInbound hJsonInbound = new HJsonInbound();
-
-        try {
-            hJsonInbound.inbound(request, context);
-
-            // todo: 能做成nio这种吗？
-            // 将请求线程交给CAPA处理；然后这个请求线程可以去做其他的东西
-            // 等到CAPA处理好了，再通知线程转交给用户
-            context.start();
-
-            return null;
-        } catch (Exception e) {
-            System.out.print("capabff.exception : " + e.getMessage());
-            JSONObject exception = new JSONObject();
-            exception.put("msg", e.getMessage());
-            exception.put("code", "300");
-            return exception.toJSONString();
-        }
-    }
-//
 //    @RequestMapping(value = "/capabff")
 //    @ResponseBody
 //    public String bff(@RequestBody String request) {
 //        CapaContext context = new CapaContext();
 //
 //        HJsonInbound hJsonInbound = new HJsonInbound();
-//        HJsonOutbound hJsonOutbound = new HJsonOutbound();
 //
 //        try {
-//            List<HJsonInvocationRequest> hJsonInvocationRequests = hJsonInbound.inbound(request, context);
-//            List<HJsonInvocationResponse> hJsonInvocationResponses = hJsonInvoker.invoke(hJsonInvocationRequests, context);
-//            JSONObject outbound = hJsonOutbound.outbound(hJsonInvocationRequests, hJsonInvocationResponses, context);
+//            hJsonInbound.inbound(request, context);
 //
-//            return outbound.toJSONString();
+//            // todo: 能做成nio这种吗？
+//            // 将请求线程交给CAPA处理；然后这个请求线程可以去做其他的东西
+//            // 等到CAPA处理好了，再通知线程转交给用户
+//            context.start();
+//
+//            return null;
 //        } catch (Exception e) {
 //            System.out.print("capabff.exception : " + e.getMessage());
 //            JSONObject exception = new JSONObject();
@@ -79,4 +56,27 @@ public class CapaApiHttpController {
 //            return exception.toJSONString();
 //        }
 //    }
+
+    @RequestMapping(value = "/capabff")
+    @ResponseBody
+    public String bff(@RequestBody String request) {
+        CapaContext context = new CapaContext();
+
+        HJsonInbound hJsonInbound = new HJsonInbound();
+        HJsonOutbound hJsonOutbound = new HJsonOutbound();
+
+        try {
+            List<HJsonInvocationRequest> hJsonInvocationRequests = hJsonInbound.inbound(request, context);
+            List<HJsonInvocationResponse> hJsonInvocationResponses = hJsonInvoker.invoke(hJsonInvocationRequests, context);
+            JSONObject outbound = hJsonOutbound.outbound(hJsonInvocationRequests, hJsonInvocationResponses, context);
+
+            return outbound.toJSONString();
+        } catch (Exception e) {
+            System.out.print("capabff.exception : " + e.getMessage());
+            JSONObject exception = new JSONObject();
+            exception.put("msg", e.getMessage());
+            exception.put("code", "300");
+            return exception.toJSONString();
+        }
+    }
 }
