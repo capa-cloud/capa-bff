@@ -11,7 +11,6 @@
     <modules>
         <module>capa-bff-api-http</module>
         <module>capa-bff-domain</module>
-        <module>capa-bff-web</module>
         <module>capa-bff-example-dependency</module>
     </modules>
 
