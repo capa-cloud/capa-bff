@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.api.http.controller.CapaApiHttpController;
-import group.rxcloud.capa.bff.hjson.json.JsonValueMapper;
+import group.rxcloud.capa.bff.json.JsonValueMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -80,7 +80,10 @@ public class SpringBootCapaApiApplicationTests {
     }
 
     @Test
-    public void test() {
+    public void test() throws InterruptedException {
+
+        // 等待测试依赖项目启动
+        Thread.sleep(10 * 1000);
 
         for (int i = 0; i < requestStrList.size(); i++) {
             String requestParam = requestStrList.get(i);
