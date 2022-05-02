@@ -1,0 +1,8 @@
+{
+    "body": {
+        "resultInfo": {
+            "id": 1
+        }
+    },
+    "errors": []
+}

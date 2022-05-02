@@ -1,0 +1,12 @@
+{
+    "body": {
+        "resultInfo": {
+            "id": 1,
+            "pet": {
+                "name": "test1",
+                "id": 1
+            }
+        }
+    },
+    "errors": []
+}
