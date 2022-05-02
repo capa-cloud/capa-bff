@@ -1,4 +1,4 @@
-package utils;
+package group.rxcloud.capa.bff.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package utils;
+package group.rxcloud.capa.bff.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import java.io.IOException;

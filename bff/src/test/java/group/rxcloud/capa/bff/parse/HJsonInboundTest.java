@@ -1,4 +1,4 @@
-package parse;
+package group.rxcloud.capa.bff.parse;
 
 import com.alibaba.fastjson.JSON;
 import group.rxcloud.capa.bff.domain.CapaContext;

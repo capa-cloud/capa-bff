@@ -1,4 +1,4 @@
-package utils;
+package group.rxcloud.capa.bff.utils;
 
 import com.google.common.collect.ImmutableMap;
 import group.rxcloud.capa.bff.domain.HJsonInvocationRequest;
