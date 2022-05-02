@@ -1,3 +1,5 @@
+![build status](https://github.com/reactivegroup/capa-bff/actions/workflows/build_and_test.yml/badge.svg?branch=master)
+
 # 零成本BFF解决方案 - CapaBFF
 
 ### 携程集团2021 "Hackthon黑客马拉松大赛" 金奖项目
