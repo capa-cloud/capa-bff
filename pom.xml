@@ -38,12 +38,6 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>group.rxcloud</groupId>
-                <artifactId>capa-bff-domain</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>findbugs-annotations</artifactId>
                 <version>3.0.1</version>
