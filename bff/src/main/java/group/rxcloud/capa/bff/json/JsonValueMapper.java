@@ -20,7 +20,7 @@ public class JsonValueMapper {
 
         // 解析PointPath{a.b.c}路径格式
         String[] paths = valuePath.split("\\.");
-        if (paths == null || paths.length == 0) {
+        if (paths.length == 0) {
             return null;
         }
 
@@ -124,16 +124,15 @@ public class JsonValueMapper {
         if (split.length == 0) {
             return;
         }
-        int length = split.length;
         JSONObject pre = null;
         JSONObject next = response;
         String finalPath = "";
-        for (int i = 0; i < length; i++) {
-            finalPath = split[i];
-            Object tmp = null;
-            if ((tmp = next.get(split[i])) != null && tmp instanceof JSONObject) {
+        for (String s : split) {
+            finalPath = s;
+            Object tmp;
+            if ((tmp = next.get(s)) != null && tmp instanceof JSONObject) {
                 pre = next;
-                next = next.getJSONObject(split[i]);
+                next = next.getJSONObject(s);
 
             } else {
                 pre = next;

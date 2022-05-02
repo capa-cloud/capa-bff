@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultContext implements Context {
 
-    private Map<String, Object> metric = new ConcurrentHashMap<>();
+    private final Map<String, Object> metric = new ConcurrentHashMap<>();
 
     @Override
     public void metric(String key, Object value) {

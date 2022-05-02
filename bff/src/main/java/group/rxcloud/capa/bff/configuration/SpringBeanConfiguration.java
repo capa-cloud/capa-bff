@@ -23,7 +23,6 @@ import java.util.concurrent.CompletableFuture;
 @Configuration
 public class SpringBeanConfiguration {
 
-    // TODO: 2021/10/26 因为capa并未就绪，所以先自己写一个capa的实现
     @Component
     public static class HttpInvokeClient {
 

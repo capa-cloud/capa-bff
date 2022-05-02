@@ -3,15 +3,12 @@ package group.rxcloud.capa.bff.outbound;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import group.rxcloud.capa.bff.domain.Context;
-import group.rxcloud.capa.bff.domain.DefaultContext;
 import group.rxcloud.capa.bff.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.domain.HJsonInvocationResponse;
 import group.rxcloud.capa.bff.json.JsonValueMapper;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -237,79 +234,5 @@ public class HJsonOutbound implements Outbound<
         }
 
         return responseBody;
-    }
-
-    public static void main(String[] args) {
-        HJsonOutbound hJsonOutbound = new HJsonOutbound();
-
-        HashMap<String, Object> aliasValueMap = new HashMap<>();
-        aliasValueMap.put("user.id", 1);
-        aliasValueMap.put("user.name", "1234");
-        aliasValueMap.put("user.address.ip", "111.222");
-        aliasValueMap.put("user.address.city.name", "shanghai");
-        aliasValueMap.put("city.address.id", "2");
-        aliasValueMap.put("city.address.name", "shanghai");
-
-        // -- generateJsonObjectFromPathMap
-
-        JSONObject jsonObject = hJsonOutbound.generateJsonObjectFromPathMap(aliasValueMap);
-        System.out.println(jsonObject);
-
-        // -- outbound
-
-        JSONObject request = new JSONObject();
-        request.put("a", "1");
-        HashMap<String, String> responseDataFormat = new HashMap<>();
-        responseDataFormat.put("b.c.id", "user.id");
-        responseDataFormat.put("b.c.name", "user.name");
-        responseDataFormat.put("b.c.city.id", "user.address.city.id");
-        responseDataFormat.put("b.c.city.name", "user.address.city.name");
-        responseDataFormat.put("b.c.address.id", "city.address.id");
-        responseDataFormat.put("b.c.address.name", "city.address.name");
-        responseDataFormat.put("*", "12345#hello");
-
-        HJsonInvocationRequest hJsonInvocationRequest = new HJsonInvocationRequest();
-        hJsonInvocationRequest.setAppId("12345");
-        hJsonInvocationRequest.setMethod("hello");
-        hJsonInvocationRequest.setData(request);
-        hJsonInvocationRequest.setResponseDataFormat(responseDataFormat);
-
-        JSONObject address = new JSONObject();
-        address.put("id", 123);
-        address.put("name", "234");
-
-        JSONObject city = new JSONObject();
-        city.put("id", 12);
-        city.put("name", "23");
-
-        JSONObject c = new JSONObject();
-        c.put("id", 1);
-        c.put("name", "2");
-        c.put("city", city);
-        c.put("address", address);
-
-        JSONObject b = new JSONObject();
-        b.put("c", c);
-
-        JSONObject a = new JSONObject();
-        a.put("b", b);
-
-        HJsonInvocationResponse hJsonInvocationResponse = new HJsonInvocationResponse();
-        hJsonInvocationResponse.setAppId("12345");
-        hJsonInvocationResponse.setMethod("hello");
-        hJsonInvocationResponse.setData(a);
-
-        HJsonInvocationRequest failure = new HJsonInvocationRequest();
-        failure.setAppId("23456");
-        failure.setMethod("failure");
-        failure.setData(request);
-        failure.setResponseDataFormat(responseDataFormat);
-
-        JSONObject outbound = hJsonOutbound.outbound(
-                List.of(hJsonInvocationRequest, failure),
-                List.of(hJsonInvocationResponse),
-                new DefaultContext());
-
-        System.out.println(outbound);
     }
 }
