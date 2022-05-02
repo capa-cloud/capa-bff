@@ -9,7 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>capa-bff-api-http</artifactId>
+    <artifactId>bff</artifactId>
     <packaging>war</packaging>
 
     <dependencies>
