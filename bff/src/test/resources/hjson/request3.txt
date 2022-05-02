@@ -1,0 +1,18 @@
+{
+  "http://localhost:8089": [
+    "/api/v1/pet": (
+      request: {},
+      response: {
+            "id" : "resultInfo.id"
+      }
+    ),
+    "/api/v1/id": (
+      request: {
+          "id": "${resultInfo.id}"
+      },
+      response: {
+            "*" : "resultInfo.pet"
+      }
+    )
+  ]
+}

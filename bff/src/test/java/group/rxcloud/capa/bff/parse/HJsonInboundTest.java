@@ -19,20 +19,20 @@ public class HJsonInboundTest {
     @Test
     public void testCase1() throws IOException {
         CapaContext context = new CapaContext();
-        String requestStr = Files.readString(new ClassPathResource("hjson/case1.txt").getFile().toPath());
+        String requestStr = Files.readString(new ClassPathResource("hjson/old/case1.txt").getFile().toPath());
         List<HJsonInvocationRequest> inbound = new HJsonInbound().inbound(requestStr, context);
 
-        String responseStr = Files.readString(new ClassPathResource("hjson/result1.txt").getFile().toPath());
+        String responseStr = Files.readString(new ClassPathResource("hjson/old/result1.txt").getFile().toPath());
         Assertions.assertEquals(JSON.toJSONString(inbound), responseStr);
     }
 
     @Test
     public void testCase2() throws IOException {
         CapaContext context = new CapaContext();
-        String requestStr = Files.readString(new ClassPathResource("hjson/case2.txt").getFile().toPath());
+        String requestStr = Files.readString(new ClassPathResource("hjson/old/case2.txt").getFile().toPath());
         List<HJsonInvocationRequest> inbound = new HJsonInbound().inbound(requestStr, context);
 
-        String responseStr = Files.readString(new ClassPathResource("hjson/result2.txt").getFile().toPath());
+        String responseStr = Files.readString(new ClassPathResource("hjson/old/result2.txt").getFile().toPath());
         Assertions.assertEquals(JSON.toJSONString(inbound), responseStr);
     }
 }
