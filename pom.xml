@@ -9,8 +9,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <modules>
-        <module>capa-bff-api-http</module>
-        <module>capa-bff-domain</module>
+        <module>bff</module>
         <module>capa-bff-example-dependency</module>
     </modules>
 
@@ -24,33 +23,27 @@
         <fastjson.version>1.2.78</fastjson.version>
         <antlr.version>4.9.2</antlr.version>
         <failOnMissingWebXml>false</failOnMissingWebXml>
+        <guava.version>31.1-jre</guava.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>group.rxcloud</groupId>
-                <artifactId>capa-bff-api-grpc</artifactId>
-                <version>${project.version}</version>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>group.rxcloud</groupId>
-                <artifactId>capa-bff-api-http</artifactId>
+                <artifactId>bff</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>group.rxcloud</groupId>
-                <artifactId>capa-bff-domain</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>findbugs-annotations</artifactId>
                 <version>3.0.1</version>
                 <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -68,40 +61,32 @@
                 <artifactId>spring-boot-starter-webflux</artifactId>
                 <version>${spring.boot.version}</version>
             </dependency>
-
-            <!-- Capa's core SDK with all features. -->
             <dependency>
                 <groupId>group.rxcloud</groupId>
                 <artifactId>capa-sdk</artifactId>
                 <version>1.0.3.RELEASE</version>
             </dependency>
-
-            <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
                 <version>3.18.1</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.googlecode.protobuf-java-format/protobuf-java-format -->
             <dependency>
                 <groupId>com.googlecode.protobuf-java-format</groupId>
                 <artifactId>protobuf-java-format</artifactId>
                 <version>1.4</version>
             </dependency>
-
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${spring.boot.version}</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4</artifactId>
@@ -111,7 +96,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
