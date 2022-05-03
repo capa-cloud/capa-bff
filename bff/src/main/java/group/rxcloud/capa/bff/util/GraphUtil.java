@@ -15,31 +15,28 @@ public class GraphUtil {
     /**
      * node集合
      */
-    private List<HJsonInvocationRequest> serviceNodes = new ArrayList<>();
+    private final List<HJsonInvocationRequest> serviceNodes = new ArrayList<>();
 
     /**
      * 有向图的邻接矩阵
      */
-    private int[][] adjacencyMatrix;
-
-    private Map<String, HJsonInvocationRequest> serviceResponse;
+    private final int[][] adjacencyMatrix;
 
     public GraphUtil(List<HJsonInvocationRequest> services) {
         if (services == null) {
             throw new NullPointerException("services is null!");
         }
         Set<String> nickNameList = new HashSet<>();
-        serviceResponse = new HashMap<>();
-        for (int x = 0; x < services.size(); x++) {
+        Map<String, HJsonInvocationRequest> serviceResponse = new HashMap<>();
+        for (HJsonInvocationRequest service : services) {
 
-            HJsonInvocationRequest service = services.get(x);
             serviceNodes.add(service);
             if (service.getResponseDataFormat() != null && !service.getResponseDataFormat().isEmpty()) {
 
                 for (String path : service.getResponseDataFormat().keySet()) {
 
                     String pathValue = service.getResponseDataFormat().get(path);
-                    String nickName = "";
+                    String nickName;
                     if (pathValue.contains("#{")) {
                         nickName = pathValue.substring(pathValue.lastIndexOf("}") + 1);
                     } else {
@@ -80,7 +77,7 @@ public class GraphUtil {
 
     public boolean find() throws IllegalInvocationRequestException {
         // 从出发节点到当前节点的轨迹
-        List<Integer> trace = new ArrayList<Integer>();
+        List<Integer> trace = new ArrayList<>();
         //返回值
         List<String> result = new ArrayList<>();
         if (adjacencyMatrix.length > 0) {
@@ -97,13 +94,13 @@ public class GraphUtil {
         int j;
         //添加闭环信息
         if ((j = trace.indexOf(v)) != -1) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             HJsonInvocationRequest startNode = serviceNodes.get(trace.get(j));
             while (j < trace.size()) {
-                sb.append(serviceNodes.get(trace.get(j)).getAppId() + "-");
+                sb.append(serviceNodes.get(trace.get(j)).getAppId()).append("-");
                 j++;
             }
-            reslut.add("cycle:" + sb.toString() + startNode.getAppId());
+            reslut.add("cycle:" + sb + startNode.getAppId());
             return;
         }
         trace.add(v);

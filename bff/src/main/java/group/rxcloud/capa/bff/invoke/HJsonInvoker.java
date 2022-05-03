@@ -2,13 +2,13 @@ package group.rxcloud.capa.bff.invoke;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import group.rxcloud.capa.bff.configuration.SpringBeanConfiguration;
 import group.rxcloud.capa.bff.domain.Context;
 import group.rxcloud.capa.bff.domain.HJsonInvocationRequest;
 import group.rxcloud.capa.bff.domain.HJsonInvocationResponse;
 import group.rxcloud.capa.bff.json.JsonValueMapper;
 import group.rxcloud.capa.bff.util.GraphUtil;
 import group.rxcloud.capa.bff.util.InnerMethodUtil;
-import group.rxcloud.capa.rpc.CapaRpcClient;
 import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
 import group.rxcloud.cloudruntimes.utils.TypeRef;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
-
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -31,7 +30,7 @@ import java.util.concurrent.*;
 public final class HJsonInvoker implements Invoke<HJsonInvocationRequest, HJsonInvocationResponse> {
 
     @Resource
-    private CapaRpcClient capaRpcClient;
+    private SpringBeanConfiguration.TempCapaRpcClient capaRpcClient;
 
     @Override
     public List<HJsonInvocationResponse> invoke(List<HJsonInvocationRequest> invocationList, Context context) throws Exception {
