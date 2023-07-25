@@ -20,7 +20,7 @@
         <file.encoding>UTF-8</file.encoding>
         <maven.version>3.8.1</maven.version>
         <spring.boot.version>2.6.0</spring.boot.version>
-        <fastjson.version>1.2.78</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <antlr.version>4.9.2</antlr.version>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <guava.version>31.1-jre</guava.version>
